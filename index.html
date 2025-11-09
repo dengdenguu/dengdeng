@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
     <style id="custom-font-styles"></style>
+    <style id="custom-chat-styles"></style>
     <style>
         :root {
             --primary-red: #4A0E0E; --dark-red: #8C1B1B; --primary-gold: #D4AF37; --light-gold: #E0C068;
@@ -16,7 +17,7 @@
             --global-font: 'Noto Serif SC', serif;
             --chat-font: 'Noto Serif SC', serif;
             --global-font-size: 16px;
-            --chat-font-size: 15px;
+            --chat-font-size: 16px;
         }
         body.theme-ink {
             --primary-red: #3a3a3a; --dark-red: #1c1c1c; --primary-gold: #b0a08c; --light-gold: #dcd3c9;
@@ -35,7 +36,8 @@
         .nav-button.active { background: var(--light-gold); color: var(--primary-red); border-color: var(--light-gold); box-shadow: 0 0 15px var(--light-gold); }
         .game-main-content { flex-grow: 1; padding: 25px; overflow-y: auto; color: var(--text-color); transition: color 0.5s; }
         .content-pane { display: none; } .content-pane.active { display: block; animation: fadeIn 0.5s; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .content-title { display: flex; justify-content: space-between; align-items: center; font-size: 24px; letter-spacing: 4px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin: 0 auto 20px auto; color: var(--light-gold); position: relative; transition: border-color 0.5s, color 0.5s; }
+        #chat-pane.content-pane.active { display: flex; flex-direction: column; height: 100%; }
+        .content-title { display: flex; justify-content: space-between; align-items: center; font-size: 24px; letter-spacing: 4px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin: 0 auto 20px auto; color: var(--light-gold); position: relative; transition: border-color 0.5s, color 0.5s; flex-shrink: 0; }
         .content-title-main { flex-grow: 1; text-align: center; }
         .game-main-content::-webkit-scrollbar { width: 8px; } .game-main-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); } .game-main-content::-webkit-scrollbar-thumb { background: var(--primary-gold); border-radius: 4px; }
         
@@ -44,7 +46,6 @@
         .form-group { margin-bottom: 10px; }
         .form-group input, .form-group select, .form-group textarea, textarea.styled-textarea { width: 100%; padding: 8px; box-sizing: border-box; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; font-family: inherit; }
         
-        /* 背包与市集 */
         .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
         .item-card { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
         .item-card h5 { margin: 0 0 10px; color: var(--light-gold); border-bottom: 1px solid rgba(224, 192, 104, 0.2); padding-bottom: 8px; }
@@ -52,7 +53,6 @@
         .item-card .footer { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
         .item-card .price { font-weight: bold; color: var(--light-gold); }
 
-        /* 主页 */
         .home-card-header { display: flex; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
         .home-portrait { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--light-gold); object-fit: cover; margin-right: 20px; box-shadow: 0 0 15px var(--light-gold); cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
         .home-portrait:hover { transform: scale(1.05); }
@@ -67,7 +67,6 @@
         .persona-block p, .persona-block textarea { font-size: 14px; line-height: 1.8; white-space: pre-wrap; width: 100%; box-sizing: border-box; }
         .persona-block textarea { background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-color); min-height: 100px; resize: vertical; }
 
-        /* 记事 */
         .journal-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .journal-controls .control-group { display: flex; flex-direction: column; }
         .journal-controls label { font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
@@ -77,14 +76,15 @@
         .journal-list-item .content { flex-grow: 1; }
         .journal-list-item b { color: var(--light-gold); display: block; margin-bottom: 5px;}
         
-        /* 文风 & 世界书 */
         .worldbook-container { display: flex; gap: 20px; height: 100%; flex-direction: column; }
         .worldbook-main { display: flex; gap: 20px; min-height: 350px; }
         .worldbook-nav { width: 220px; flex-shrink: 0; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; overflow-y: auto; }
         .worldbook-nav ul { list-style: none; padding: 0; margin: 0; }
-        .worldbook-nav li { display: flex; justify-content: space-between; align-items: center; padding: 10px; cursor: grab; border-radius: 4px; margin-bottom: 5px; user-select: none; } 
+        .worldbook-nav li { display: flex; justify-content: space-between; align-items: center; padding: 10px; cursor: pointer; border-radius: 4px; margin-bottom: 5px; user-select: none; } 
         .worldbook-nav li:hover, .worldbook-nav li.active { background: var(--primary-gold); color: var(--primary-red); }
-        .worldbook-nav li .delete-entry { cursor: pointer; display: none; } .worldbook-nav li:hover .delete-entry { display: inline; }
+        .worldbook-nav li .controls { display: none; align-items: center; gap: 5px;}
+        .worldbook-nav li:hover .controls { display: flex; }
+        .worldbook-nav li .delete-entry { cursor: pointer; } 
         .worldbook-content { flex-grow: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; overflow-y: auto; }
         .writing-style-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 15px; }
         .writing-style-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
@@ -99,7 +99,6 @@
         input:checked + .slider:before { transform: translateX(20px); }
         .writing-style-content { display: none; margin-top: 10px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; cursor: pointer; }
         
-        /* 美化 */
         .beautify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .beautify-column { display: flex; flex-direction: column; gap: 20px; }
         .theme-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
@@ -121,8 +120,13 @@
         .delete-btn, .custom-font-item .delete-btn { cursor: pointer; color: var(--primary-gold); padding: 0 5px; font-size: 18px; font-weight: bold; transition: color 0.2s; }
         .delete-btn:hover, .custom-font-item .delete-btn:hover { color: var(--light-gold); }
         
-        /* Other component styles */
-        .map-discovery-area { min-height: 500px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; line-height: 1.9; white-space: pre-wrap; }
+        .map-discovery-area { min-height: 250px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; line-height: 1.9; white-space: pre-wrap; }
+        .custom-location-list { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+        .custom-location-card { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; position: relative; }
+        .custom-location-card h5 { margin: 0 0 10px; color: var(--light-gold); border-bottom: 1px solid rgba(224, 192, 104, 0.2); padding-bottom: 8px; }
+        .custom-location-card p { font-size: 14px; opacity: 0.8; line-height: 1.6; margin: 0; }
+        .custom-location-card .delete-btn { position: absolute; top: 10px; right: 10px; font-size: 20px; }
+
         .characters-list { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
         .characters-section h3 { color: var(--light-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 25px; text-align: center; letter-spacing: 2px;}
         .character-card { display: flex; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; gap: 15px; align-items: center; }
@@ -133,7 +137,9 @@
         .character-info .type-tag { font-size: 12px; background: var(--primary-gold); color: var(--primary-red); padding: 2px 8px; border-radius: 10px; }
         .character-info p { margin: 0; font-size: 14px; opacity: 0.8; }
         .character-actions { display: flex; flex-direction: column; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .chat-container { display: flex; height: calc(100% - 70px); gap: 20px; }
+        
+        /* ---------- CHAT INTERFACE REWORK START ---------- */
+        .chat-container { display: flex; flex-grow: 1; gap: 20px; min-height: 0; }
         .chat-sidebar { width: 220px; flex-shrink: 0; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; overflow-y: auto; }
         .chat-sidebar h4 { margin: 0 0 10px; text-align: center; color: var(--light-gold); }
         .chat-partner-list { list-style: none; padding: 0; margin: 10px 0; }
@@ -141,21 +147,24 @@
         .chat-partner-list li:hover, .chat-partner-list li.active { background: var(--primary-gold); color: var(--primary-red); }
         .chat-partner-list img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .chat-window { flex-grow: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
-        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-        .chat-message { display: flex; margin-bottom: 15px; max-width: 80%; }
-        .chat-message .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; flex-shrink: 0; align-self: flex-end; }
-        .chat-message .bubble { padding: 10px 15px; border-radius: 18px; line-height: 1.6; word-wrap: break-word; }
+        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; background-size: cover; background-position: center; transition: background-image 0.5s;}
+        .chat-message { display: flex; margin-bottom: 20px; max-width: 80%; align-items: flex-end; }
+        .chat-message .avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+        .chat-message .bubble { padding: 12px 18px; border-radius: 18px; line-height: 1.7; word-wrap: break-word; position: relative; }
         .chat-message.user { align-self: flex-end; flex-direction: row-reverse; }
-        .chat-message.user .avatar { margin-left: 10px; margin-right: 0; }
+        .chat-message.user .avatar { margin-left: 12px; }
         .chat-message.user .bubble { background: var(--primary-gold); color: var(--primary-red); border-bottom-right-radius: 5px; }
         .chat-message.assistant { align-self: flex-start; }
+        .chat-message.assistant .avatar { margin-right: 12px; }
         .chat-message.assistant .bubble { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-bottom-left-radius: 5px; }
+        .chat-message.system .bubble { background: transparent; border: 1px dashed var(--border-color); color: var(--light-gold); font-size: 14px; text-align: center; padding: 8px 12px; font-style: italic; opacity: 0.8; }
+        .chat-message.system { width: 100%; max-width: 100%; justify-content: center; }
         .bubble.image-only { background: transparent; padding: 0; border: none; box-shadow: none; border-radius: 12px; }
         .chat-image { max-width: 200px; max-height: 200px; border-radius: 12px; display: block; cursor: pointer; transition: transform 0.2s; object-fit: contain; }
         .chat-image:hover { transform: scale(1.05); }
-        .chat-input-area { display: flex; padding: 15px; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.3); position: relative; }
-        .chat-input-area textarea { flex-grow: 1; resize: none; margin-right: 10px; }
-        .emoji-panel { position: absolute; bottom: 70px; right: 15px; width: 300px; background: var(--dark-red); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); z-index: 10; overflow: hidden; }
+        .chat-input-area { display: flex; padding: 15px; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.3); position: relative; flex-shrink: 0; }
+        .chat-input-area textarea { flex-grow: 1; resize: none; margin-right: 10px; padding: 10px; min-height: 40px; box-sizing: border-box; }
+        .emoji-panel { position: absolute; bottom: 85px; right: 15px; width: 300px; background: var(--dark-red); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); z-index: 10; overflow: hidden; }
         .emoji-panel-tabs { display: flex; border-bottom: 1px solid var(--border-color); }
         .emoji-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; background: rgba(0,0,0,0.2); }
         .emoji-tab.active { background: var(--primary-gold); color: var(--primary-red); }
@@ -166,6 +175,8 @@
         .emoji-item { cursor: pointer; padding: 5px; text-align: center; border-radius: 4px; font-size: 16px; } .emoji-item:hover { background: var(--primary-gold); color: var(--primary-red); }
         .sticker-item { width: 100%; height: 60px; object-fit: contain; cursor: pointer; transition: transform 0.2s; }
         .sticker-item:hover { transform: scale(1.1); }
+        /* ---------- CHAT INTERFACE REWORK END ---------- */
+        
         .forum-post { position: relative; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: background 0.2s; }
         .api-section { margin-bottom: 25px; }
         .api-section h4 { display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -202,8 +213,13 @@
             #toast-container { bottom: 70px; }
             .game-container { width: 100%; height: 100vh; flex-direction: column; border-radius: 0; border: none; box-shadow: none; }
             .game-nav { order: 2; width: 100%; height: auto; flex-direction: row; justify-content: flex-start; padding: 5px 10px; gap: 10px; border-right: none; border-top: 2px solid var(--border-color); flex-shrink: 0; z-index: 10; overflow-x: auto; box-sizing: border-box; }
-            .game-main-content { order: 1; }
-            .nav-button { writing-mode: initial; text-orientation: initial; padding: 8px 12px; font-size: 14px; letter-spacing: 1px; flex-grow: 0; text-align: center; width: auto; flex-shrink: 0; }
+            .game-main-content { 
+                order: 1; 
+                /* [MODIFIED FOR REQ 4] Make content area scrollable and fix nav bar */
+                flex-grow: 1;
+                min-height: 0;
+            }
+            .nav-button { writing-mode: initial; text-orientation: initial; padding: 8px 12px; font-size: 14px; letter-spacing: 1px; flex-grow: 0; text-align: center; width: auto; flex-shrink: 0; white-space: nowrap; }
             .game-main-content { padding: 15px; }
             .controls-group { gap: 15px; }
             .content-title { font-size: 20px; padding-bottom: 8px; margin-bottom: 15px; }
@@ -212,18 +228,22 @@
             .home-stats-grid { grid-template-columns: 1fr; }
             .character-card { flex-direction: column; text-align: center; }
             .character-info .name-type { justify-content: center; gap: 15px; margin-bottom: 10px; }
-            .character-actions { flex-direction: row; justify-content: center; padding: 10px 0; gap: 10px; flex-wrap: wrap; } /* MODIFIED: Added flex-wrap */
-            .chat-container { flex-direction: column; height: calc(100% - 70px); gap: 10px; }
+            .character-actions { flex-direction: row; justify-content: center; padding: 10px 0; gap: 10px; flex-wrap: wrap; }
+            .chat-container { flex-direction: column; height: auto; flex-grow: 1; gap: 10px; }
             .chat-sidebar { width: 100%; max-height: 150px; margin-bottom: 0; flex-shrink: 0; }
             .chat-window { flex-grow: 1; }
             .modal-content { width: 90vw; max-width: 400px; padding: 20px; }
             .worldbook-main { flex-direction: column; min-height: unset; height: auto; }
             .worldbook-nav { width: 100%; max-height: 120px; }
             .journal-controls { grid-template-columns: repeat(2, 1fr); }
-            .save-slot-group { flex-direction: column; align-items: stretch; gap: 10px !important; } /* MODIFIED: Reinforced stacking */
-            .save-slot-group .action-button-small { width: 100%; box-sizing: border-box; } /* MODIFIED: Reinforced full width */
-            .map-discovery-area { min-height: 300px; }
+            .save-slot-group { flex-direction: column; align-items: stretch; gap: 10px !important; }
+            .save-slot-group .action-button-small { width: 100%; box-sizing: border-box; }
+            .map-discovery-area { min-height: 200px; }
             .beautify-grid { grid-template-columns: 1fr; }
+            .delete-btn, .custom-font-item .delete-btn {
+                padding: 5px 10px;
+                font-size: 22px;
+            }
         }
     </style>
 </head>
@@ -231,7 +251,6 @@
     <input type="file" id="avatar-uploader" class="hidden" accept="image/*">
     <input type="file" id="data-importer" class="hidden" accept=".json">
     <input type="file" id="emoji-uploader" class="hidden" accept="image/*" multiple>
-    <input type="file" id="font-uploader" class="hidden" accept=".ttf,.otf,.woff,.woff2">
     
     <div id="toast-container"></div>
 
@@ -248,6 +267,7 @@
             <button class="nav-button" data-target="forum-pane">论坛</button>
             <button class="nav-button" data-target="worldbook-pane">世界书</button>
             <button class="nav-button" data-target="beautify-pane">美化</button>
+            <button class="nav-button" data-target="prompts-pane">天机阁</button>
             <button class="nav-button" data-target="api-pane">API</button>
         </nav>
 
@@ -262,6 +282,7 @@
             <div id="forum-pane" class="content-pane"></div>
             <div id="worldbook-pane" class="content-pane"></div>
             <div id="beautify-pane" class="content-pane"></div>
+            <div id="prompts-pane" class="content-pane"></div>
             <div id="api-pane" class="content-pane"></div>
         </main>
     </div>
@@ -284,14 +305,50 @@
         <div class="controls-group" style="margin-top:20px;">
             <button class="action-button-small" onclick="document.getElementById('emoji-uploader').click()">本地上传</button>
             <button class="action-button-small" onclick="importEmojisFromURLs()">从链接导入</button>
+            <button class="action-button-small" id="toggle-emoji-select" onclick="toggleSelectAllEmojis(this)">全选</button>
             <button class="action-button-small" onclick="deleteSelectedEmojis()">删除选中</button>
         </div>
     </div></div>
+    <div id="custom-location-modal" class="modal-overlay" onclick="closeModal(event, 'custom-location-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'custom-location-modal')">×</span><h3>【 添加自定义地点 】</h3><div class="form-group"><label for="custom-location-name">地点名称:</label><input type="text" id="custom-location-name"></div><div class="form-group"><label for="custom-location-desc">地点描述:</label><textarea id="custom-location-desc" rows="6"></textarea></div><div style="text-align:center;"><button class="action-button-small" onclick="saveCustomLocation()">保存地点</button></div></div></div>
+    <div id="chat-beautify-modal" class="modal-overlay" onclick="closeModal(event, 'chat-beautify-modal')">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal(null, 'chat-beautify-modal')">×</span>
+            <h3>聊天界面美化</h3>
+            <div class="form-group">
+                <label for="chat-bg-url">背景图链接:</label>
+                <input type="text" id="chat-bg-url" class="styled-textarea" placeholder="输入图片URL或留空使用默认背景">
+            </div>
+            <div class="form-group">
+                <label for="user-bubble-css">玩家气泡样式 (CSS):</label>
+                <textarea id="user-bubble-css" rows="4" class="styled-textarea" placeholder="例如: border-radius: 10px; font-style: italic;"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="assistant-bubble-css">对方气泡样式 (CSS):</label>
+                <textarea id="assistant-bubble-css" rows="4" class="styled-textarea" placeholder="例如: background: #333; border-color: #777;"></textarea>
+            </div>
+            <div class="controls-group" style="margin-top:20px;">
+                <button class="action-button-small" onclick="applyChatBeautifySettings()">应用</button>
+                <button class="action-button-small" onclick="resetChatBeautifySettings()">恢复默认</button>
+            </div>
+        </div>
+    </div>
+    <!-- [ADDED FOR REQ 2 & 3] Modal for custom chat partner actions -->
+    <div id="custom-partner-action-modal" class="modal-overlay" onclick="closeModal(event, 'custom-partner-action-modal')">
+        <div class="modal-content" style="width: 300px;">
+            <span class="modal-close" onclick="closeModal(null, 'custom-partner-action-modal')">×</span>
+            <h3 id="custom-partner-action-title" style="text-align: center;"></h3>
+            <div class="controls-group" style="flex-direction: column; gap: 15px; margin-top: 20px;">
+                <button class="action-button-small" id="custom-partner-select-btn" style="width: 100%;">开始闲聊</button>
+                <button class="action-button-small" id="custom-partner-delete-btn" style="width: 100%;">删除对象</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
     // ----- 全局数据与状态 -----
     const SAVE_KEY_CURRENT = 'guFengGameSaveData_Current';
-    let protagonistData, characterList, journalEntries, forumPosts, worldbookData, gameTime, chatHistories, customFonts, customEmojis, customChatPartners, marketplaceData, apiProviders;
+    let protagonistData, characterList, journalEntries, forumPosts, worldbookData, gameTime, chatHistories, customFonts, customEmojis, customChatPartners, marketplaceData, apiProviders, promptTemplates, mapData;
     let currentTargetAvatarId = null;
     let activeChatCharacter = null;
     let currentJournalStartIndex = 1;
@@ -306,21 +363,21 @@
         
         loadGameData();
         applyFontSettings();
+        loadChatBeautifySettings(); 
 
         renderAllPanes();
         setInterval(updateModernTime, 1000);
         document.getElementById('avatar-uploader').addEventListener('change', handleAvatarUpload);
         document.getElementById('data-importer').addEventListener('change', importData);
         document.getElementById('emoji-uploader').addEventListener('change', uploadEmojis);
-        document.getElementById('font-uploader').addEventListener('change', handleFontUpload);
     });
 
     function saveGameData() {
         const allData = { 
             protagonistData, characterList, journalEntries, forumPosts, worldbookData, 
             gameTime, chatHistories, currentJournalStartIndex, customFonts, customEmojis, 
-            customChatPartners, marketplaceData, apiProviders,
-            timestamp: new Date().toISOString() // Add timestamp for save slots
+            customChatPartners, marketplaceData, apiProviders, promptTemplates, mapData,
+            timestamp: new Date().toISOString()
         };
         localStorage.setItem(SAVE_KEY_CURRENT, JSON.stringify(allData));
     }
@@ -337,6 +394,8 @@
             customChatPartners = data.customChatPartners || [];
             apiProviders = data.apiProviders || [];
             marketplaceData = data.marketplaceData || { lastRefreshed: null, items: [] };
+            promptTemplates = data.promptTemplates || getDefaultPrompts();
+            mapData = data.mapData || { customLocations: [] };
             if (data.customEmojis && data.customEmojis.length > 0 && typeof data.customEmojis[0] === 'string') {
                 customEmojis = data.customEmojis.map((url, index) => ({ name: `贴图_${index + 1}`, url }));
             } else {
@@ -345,21 +404,26 @@
         } else {
             initGameData();
         }
+        // Data Migrations
         if (!protagonistData.settings) protagonistData.settings = {};
         if (!protagonistData.stats.hasOwnProperty('年龄')) protagonistData.stats.年龄 = 16;
         if (!protagonistData.stats.hasOwnProperty('家世')) protagonistData.stats.家世 = '江湖孤儿';
         if (!protagonistData.inventory) protagonistData.inventory = [];
-
-        // Data migration for character inventory
         if (characterList && characterList.some(c => !c.hasOwnProperty('inventory'))) {
             characterList.forEach(c => { if (!c.inventory) c.inventory = []; });
         }
-
         if (typeof worldbookData.writingStyle === 'string') {
             worldbookData.writingStyles = { title: "文风设定", entries: [{ id: `ws-${Date.now()}`, title: "默认文风", content: worldbookData.writingStyle, enabled: true }] };
             delete worldbookData.writingStyle;
         }
         if (!worldbookData.writingStyles) worldbookData.writingStyles = { title: "文风设定", entries: [] };
+        if (worldbookData.entries && worldbookData.entries.some(e => !e.hasOwnProperty('enabled'))) {
+            worldbookData.entries.forEach(e => { if (e.enabled === undefined) e.enabled = true; });
+        }
+        if (!promptTemplates || Object.keys(promptTemplates).length === 0 || !promptTemplates.giftReaction) {
+            promptTemplates = getDefaultPrompts();
+        }
+        if (!mapData) mapData = { customLocations: [] };
     }
 
     function initGameData() {
@@ -372,20 +436,23 @@
         customFonts = []; customEmojis = []; customChatPartners = [];
         marketplaceData = { lastRefreshed: null, items: [] };
         apiProviders = [];
+        promptTemplates = getDefaultPrompts();
+        mapData = { customLocations: [] };
         saveGameData();
     }
     
     document.querySelectorAll('.nav-button').forEach(button => button.addEventListener('click', (e) => {
         document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.content-pane').forEach(pane => pane.classList.remove('active'));
+        const targetPane = document.getElementById(e.currentTarget.dataset.target);
         e.currentTarget.classList.add('active');
-        document.getElementById(e.currentTarget.dataset.target).classList.add('active');
+        targetPane.classList.add('active');
     }));
     
     function renderAllPanes() {
         renderHomePane(); renderMapPane(); renderCharactersPane(); renderBackpackPane(); renderMarketplacePane();
         renderChatPane(); renderJournalPane(); renderForumPane(); renderWorldbookPane(); 
-        renderBeautifyPane(); renderApiPane();
+        renderBeautifyPane(); renderApiPane(); renderPromptsPane();
     }
   
     function buildBasePrompt() {
@@ -394,7 +461,7 @@
         if (enabledStyles.length > 0) {
             basePrompt += `请严格遵循以下写作风格和规则：\n${enabledStyles.map(e => `[规则: ${e.title}]\n${e.content}`).join('\n\n')}\n\n`;
         }
-        const worldbookContext = worldbookData.entries.map(e => `[世界观: ${e.title}]\n${e.text}`).join('\n\n');
+        const worldbookContext = worldbookData.entries.filter(e => e.enabled).map(e => `[世界观: ${e.title}]\n${e.text}`).join('\n\n');
         if (worldbookContext) {
             basePrompt += `请参考以下世界观设定进行创作：\n${worldbookContext}\n\n`;
         }
@@ -413,21 +480,49 @@
         } catch (error) { showToast(`API调用失败: ${error.message}`); console.error("API Error:", error); return null; } finally { if (elementToLoad) elementToLoad.disabled = false; hideLoader(); }
     }
 
-    // ----- 背包 & 市集 -----
     function renderBackpackPane() {
         const pane = document.getElementById('backpack-pane');
         let content;
         if (protagonistData.inventory.length === 0) {
             content = '<p style="text-align:center; opacity:0.7;">行囊空空如也，不如去市集逛逛？</p>';
         } else {
-            content = `<div class="item-grid">${protagonistData.inventory.map(item => `
+            content = `<div class="item-grid">${protagonistData.inventory.map(item => {
+                const sellPrice = Math.floor((item.price || 20) / 2); // Default sell price if item has no price
+                return `
                 <div class="item-card">
                     <h5>${item.name} ${item.quantity > 1 ? `(x${item.quantity})` : ''}</h5>
                     <p>${item.desc}</p>
+                    <div class="footer">
+                        <span class="price">可售: ${sellPrice} 金</span>
+                        <button class="action-button-small" onclick="sellBackpackItem('${item.p_inv_id}')">出售</button>
+                    </div>
                 </div>
-            `).join('')}</div>`;
+            `}).join('')}</div>`;
         }
         pane.innerHTML = `<h3 class="content-title"><span class="content-title-main">【 我的行囊 】</span></h3>${content}`;
+    }
+
+    function sellBackpackItem(p_inv_id) {
+        const itemIndex = protagonistData.inventory.findIndex(i => i.p_inv_id === p_inv_id);
+        if (itemIndex === -1) return;
+        
+        const item = protagonistData.inventory[itemIndex];
+        const sellPrice = Math.floor((item.price || 20) / 2);
+
+        if (confirm(`确定要以 ${sellPrice} 金的价格出售【${item.name}】吗？`)) {
+            protagonistData.stats.金钱 += sellPrice;
+            
+            if (item.quantity > 1) {
+                item.quantity -= 1;
+            } else {
+                protagonistData.inventory.splice(itemIndex, 1);
+            }
+
+            saveGameData();
+            renderBackpackPane();
+            renderHomePane(); // To update money display
+            showToast(`售出 ${item.name}，获得 ${sellPrice} 金。`);
+        }
     }
 
     function renderMarketplacePane() {
@@ -451,8 +546,14 @@
     }
     
     async function refreshMarketplace(button) {
-        const itemCount = Math.floor(Math.random() * 8) + 3; // 3-10 items
-        const prompt = `你是一位古风游戏的设计师。请为市集随机生成 ${itemCount} 件独特的物品。物品可以是装备、丹药、奇珍、书籍等。每件物品需要包含名称(name)，一段约50字的描述(desc)，以及一个整数价格(price)。请严格按照以下JSON格式返回，不要包含任何额外的解释或标记: [{"name": "物品名称", "desc": "一段约50字的描述", "price": 整数价格}, ...]`;
+        const itemCount = Math.floor(Math.random() * 8) + 3;
+        let characterNeedsContext = '暂无特殊角色。';
+        if (characterList.length > 0) {
+            characterNeedsContext = characterList
+                .map(c => `${c.name} (${c.type}, ${c.desc.substring(0, 20)}...)`)
+                .join('; ');
+        }
+        const prompt = getPrompt('refreshMarketplace', { itemCount, characterNeedsContext });
         
         const result = await callLLM(prompt, button);
         if (result) {
@@ -495,7 +596,6 @@
         }
     }
     
-    // 主页
     function renderHomePane(isEditing = false) {
         const pane = document.getElementById('home-pane');
         const p = protagonistData;
@@ -530,7 +630,6 @@
             <div class="persona-block"><h3>【 详细人设 】</h3>${isEditing ? `<textarea id="protagonist-persona">${p.persona}</textarea>` : `<p>${p.persona}</p>`}</div>`;
     }
 
-    // 记事
     function renderJournalPane() {
         const pane = document.getElementById('journal-pane');
         const journalHTML = journalEntries.length > 0 ? `<ul class="journal-list">${journalEntries.map(e => `<li class="journal-list-item"><div class="content"><b>【${e.date}】</b>${e.text}</div><span class="delete-btn" onclick="deleteJournalEntry('${e.id}')" title="删除此条">×</span></li>`).join('')}</ul>` : '<p style="text-align:center; opacity:0.7;">今日无事...</p>';
@@ -550,7 +649,7 @@
     async function generateJournalEntries(button) {
         currentJournalStartIndex = parseInt(document.getElementById('journal-start-index').value) || 1;
         const count = parseInt(document.getElementById('journal-count').value);
-        const prompt = `我正在玩一个古风养成游戏，我的角色是：\n姓名：${protagonistData.name}\n人设：${protagonistData.persona}\n请为我生成 ${count} 条连续的记事。记事内容要简洁、符合古风背景和我的身份，且每条记事不少于50字。请直接返回一个用换行符分隔的列表，不要添加编号。`;
+        const prompt = getPrompt('generateJournal', { name: protagonistData.name, persona: protagonistData.persona, count: count });
         const result = await callLLM(prompt, button);
         if (result) {
             const newEntryTexts = result.split('\n').filter(line => line.trim() !== '');
@@ -571,10 +670,16 @@
         }
     }
 
-    // 世界书 & 文风
     function renderWorldbookPane() {
         const pane = document.getElementById('worldbook-pane');
-        const bookItemsHTML = worldbookData.entries.map(e => `<li data-entry-id="${e.id}" draggable="true"><span>${e.title}</span><span class="delete-entry" onclick="deleteWorldbookEntry('${e.id}', event)">×</span></li>`).join('');
+        const bookItemsHTML = worldbookData.entries.map(e => `
+            <li data-entry-id="${e.id}" draggable="true" onclick="updateWorldbookContent('${e.id}')">
+                <span>${e.title}</span>
+                <div class="controls">
+                    <label class="toggle-switch"><input type="checkbox" ${e.enabled ? 'checked' : ''} onchange="toggleWorldbookEntry('${e.id}', this.checked, event)"><span class="slider"></span></label>
+                    <span class="delete-entry delete-btn" onclick="deleteWorldbookEntry('${e.id}', event)">×</span>
+                </div>
+            </li>`).join('');
         const styleItemsHTML = worldbookData.writingStyles.entries.map(e => `
             <li class="writing-style-item">
                 <div class="writing-style-header">
@@ -603,6 +708,15 @@
         if (navItems.length > 0 && worldbookData.entries.find(e=>e.id === navItems[0].dataset.entryId)) updateWorldbookContent(navItems[0].dataset.entryId);
         else updateWorldbookContent(null);
     }
+    function toggleWorldbookEntry(entryId, isEnabled, event) {
+        event.stopPropagation();
+        const entry = worldbookData.entries.find(e => e.id === entryId);
+        if (entry) {
+            entry.enabled = isEnabled;
+            saveGameData();
+            showToast(`世界观“${entry.title}”已${isEnabled ? '开启' : '关闭'}`);
+        }
+    }
     function toggleStyleContent(element) { const content = element.parentElement.nextElementSibling; content.style.display = content.style.display === 'block' ? 'none' : 'block'; }
     function openWritingStyleModal(id = null) {
         const modalTitle = document.getElementById('writing-style-modal-title'); const idInput = document.getElementById('writing-style-id');
@@ -621,16 +735,14 @@
     function deleteWritingStyle(id) { if (confirm('确定删除此文风条目？')) { worldbookData.writingStyles.entries = worldbookData.writingStyles.entries.filter(e => e.id !== id); saveGameData(); renderWorldbookPane(); } }
     function toggleWritingStyle(id, isEnabled) { const entry = worldbookData.writingStyles.entries.find(e => e.id === id); if (entry) { entry.enabled = isEnabled; saveGameData(); showToast(`文风“${entry.title}”已${isEnabled ? '开启' : '关闭'}`); } }
 
-    // 美化 & 字体
     function renderBeautifyPane() {
         const pane = document.getElementById('beautify-pane');
         const currentTheme = localStorage.getItem('gameTheme') || 'theme-default';
         const globalFont = protagonistData.settings?.globalFontName || 'default';
         const chatFont = protagonistData.settings?.chatFontName || 'default';
         const globalFontSize = protagonistData.settings?.globalFontSize || 16;
-        const chatFontSize = protagonistData.settings?.chatFontSize || 15;
+        const chatFontSize = protagonistData.settings?.chatFontSize || 16;
         const customColors = JSON.parse(localStorage.getItem('customThemeColors') || '{}');
-        
         const customFontOptions = customFonts.map(font => `<option value="${font.name}">${font.name}</option>`).join('');
         const customFontListHTML = customFonts.map((font, index) => `<li class="custom-font-item"><span>${font.name}</span><span class="delete-btn" onclick="deleteCustomFont(${index})">×</span></li>`).join('');
 
@@ -672,10 +784,11 @@
                         </div></div>
                     </div>
                     <div class="section-box"><h4>自定义字体</h4>
-                        <div class="form-group"><input type="text" id="custom-font-url" placeholder="字体链接 (https://.../font.woff2 或 data:...)"></div>
+                        <div class="form-group"><input type="text" id="custom-font-name" placeholder="字体名称 (例如: 清风体)"></div>
+                        <div class="form-group"><input type="text" id="custom-font-url" placeholder="字体链接 (https://... 或 data:...)"></div>
+                        <p style="font-size:12px; opacity:0.7; margin:-5px 0 10px;">提示: 添加网络链接时将自动尝试转换为内嵌数据，以提高稳定性。</p>
                         <div class="controls-group">
-                            <button class="action-button-small" onclick="document.getElementById('font-uploader').click()">本地上传</button>
-                            <button class="action-button-small" onclick="addCustomFontFromUrl()">从链接添加</button>
+                            <button class="action-button-small" onclick="addCustomFont()">添加字体</button>
                         </div>
                         <ul class="custom-font-list" id="custom-font-list">${customFontListHTML || '<p style="text-align:center; opacity:0.7;">暂无自定义字体</p>'}</ul>
                     </div>
@@ -699,7 +812,7 @@
     }
 
     function handleFontSizeChange(target, value) {
-        const size = parseInt(value) || (target === 'global' ? 16 : 15);
+        const size = parseInt(value) || (target === 'global' ? 16 : 16);
         protagonistData.settings[`${target}FontSize`] = size;
         saveGameData();
         document.documentElement.style.setProperty(`--${target}-font-size`, `${size}px`);
@@ -711,57 +824,44 @@
         handleFontChange('global', protagonistData.settings?.globalFontName || 'default');
         handleFontChange('chat', protagonistData.settings?.chatFontName || 'default');
         handleFontSizeChange('global', protagonistData.settings?.globalFontSize || 16);
-        handleFontSizeChange('chat', protagonistData.settings?.chatFontSize || 15);
-    }
-    
-    function handleFontUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const fontName = prompt(`请为这个字体文件命名 (例如: 落霞体):`, file.name.split('.')[0]);
-        if (!fontName || !fontName.trim()) {
-            showToast('已取消操作，字体名称不能为空。');
-            event.target.value = ''; // Reset file input
-            return;
-        }
-
-        if (customFonts.some(font => font.name === fontName)) {
-            showToast('已存在同名字体！请换个名称。');
-            event.target.value = ''; // Reset file input
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const fontUrl = e.target.result; // This will be a data: URL
-            customFonts.push({ name: fontName, url: fontUrl });
-            saveGameData();
-            applyFontSettings();
-            renderBeautifyPane();
-            showToast(`字体“${fontName}”已成功添加！`);
-        };
-        reader.onerror = function() {
-            showToast('读取字体文件失败！');
-        };
-        reader.readAsDataURL(file);
-        event.target.value = ''; // Reset file input for next upload
+        handleFontSizeChange('chat', protagonistData.settings?.chatFontSize || 16);
     }
 
-    function addCustomFontFromUrl() {
+    async function addCustomFont() {
+        const nameInput = document.getElementById('custom-font-name');
         const urlInput = document.getElementById('custom-font-url');
+        const name = nameInput.value.trim();
         const url = urlInput.value.trim();
-        if (!url) { showToast('字体链接不能为空！'); return; }
-        
-        const name = prompt(`请为这个字体链接命名 (例如: 清风体):`);
-        if (!name || !name.trim()) { showToast('已取消操作，字体名称不能为空。'); return; }
+
+        if (!name) { showToast('字体名称不能为空！'); return; }
+        if (!url.startsWith('http') && !url.startsWith('data:')) { showToast('链接格式无效！'); return; }
         if (customFonts.some(font => font.name === name)) { showToast('已存在同名字体！'); return; }
 
-        customFonts.push({ name, url });
-        saveGameData();
-        applyFontSettings();
-        renderBeautifyPane();
-        urlInput.value = '';
-        showToast(`字体“${name}”已添加！`);
+        showLoader();
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`网络响应不佳 (status: ${response.status})`);
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const dataUrl = reader.result;
+                customFonts.push({ name, url: dataUrl });
+                saveGameData(); applyFontSettings(); renderBeautifyPane();
+                nameInput.value = ''; urlInput.value = '';
+                hideLoader();
+                showToast(`字体“${name}”已成功转换并添加！`);
+            };
+            reader.readAsDataURL(blob);
+        } catch (error) {
+            hideLoader();
+            console.error("Font conversion failed:", error);
+            if (confirm(`字体链接转换失败: ${error.message}。\n这通常由CORS策略导致。是否仍要使用原始链接添加？(可能无法正常显示)`)) {
+                customFonts.push({ name, url });
+                saveGameData(); applyFontSettings(); renderBeautifyPane();
+                nameInput.value = ''; urlInput.value = '';
+                showToast(`已使用原始链接添加字体“${name}”`);
+            }
+        }
     }
 
     function deleteCustomFont(index) {
@@ -776,18 +876,42 @@
 
     function resetAllCustomizations() { if(confirm('确定要重置所有主题和字体设置吗？')){ localStorage.removeItem('customThemeColors'); protagonistData.settings = {}; customFonts = []; saveGameData(); setTheme('theme-default'); applyFontSettings(); renderBeautifyPane(); showToast('美化设置已重置'); } }
     
-    // --- 主页逻辑强化 ---
     function toggleHomeEdit() { const isEditing = !!document.getElementById('protagonist-name'); if (isEditing) { protagonistData.name = document.getElementById('protagonist-name').value; protagonistData.title = document.getElementById('protagonist-title').value; protagonistData.persona = document.getElementById('protagonist-persona').value; for (const key in protagonistData.stats) { const input = document.getElementById(`stat-${key}`); if (input) { protagonistData.stats[key] = (key === '家世') ? input.value : (parseInt(input.value) || 0); } } saveGameData(); renderHomePane(false); } else { renderHomePane(true); } }
     function randomizeStats() { const familyBackgrounds = ['名门之后', '书香门第', '江湖浪人', '神秘遗孤', '商贾之子', '草根平民']; for (const key in protagonistData.stats) { let input = document.getElementById(`stat-${key}`); if (!input) continue; let newVal; switch(key) { case '年龄': newVal = Math.floor(Math.random() * 10) + 16; break; case '家世': newVal = familyBackgrounds[Math.floor(Math.random() * familyBackgrounds.length)]; break; case '声望': newVal = Math.floor(Math.random() * 500); break; case '金钱': newVal = Math.floor(Math.random() * 1000); break; default: newVal = Math.floor(Math.random() * 51) + 50; } input.value = newVal; } }
     
-    // --- 角色 & 聊天 & 论坛 ---
     function prepareAvatarChange(targetId) { currentTargetAvatarId = targetId; document.getElementById('avatar-uploader').click(); }
     function handleAvatarUpload(event) { const file = event.target.files[0]; if (file && currentTargetAvatarId) { const reader = new FileReader(); reader.onload = (e) => { if (currentTargetAvatarId === 'protagonist') { protagonistData.avatar = e.target.result; renderHomePane(!!document.getElementById('protagonist-name')); } else { const char = characterList.find(c => c.id === currentTargetAvatarId) || customChatPartners.find(c => c.id === currentTargetAvatarId); if (char) char.avatar = e.target.result; renderCharactersPane(); renderChatPane(); } saveGameData(); }; reader.readAsDataURL(file); } }
-    async function exploreNewPlace(button) { const area = document.querySelector('.map-discovery-area'); area.innerHTML = '演算中...'; const place = ["断魂崖", "迷仙林", "无回谷", "葬剑山庄", "听雨楼", "天涯海阁"][Math.floor(Math.random() * 6)]; const prompt = `你是一位才华横溢的游戏文案。请为一款古风养成游戏，生成一个名为“${place}”的地点探索描述。描述需要充满氛围感、想象力和细节，字数不少于200字，要能激发玩家的探索欲。`; const result = await callLLM(prompt, button); if (result) { area.innerHTML = `<h4>你来到了【${place}】</h4><p>${result}</p>`; } else { area.innerHTML = '生成失败...'; } }
+    async function exploreNewPlace(button) { 
+        const area = document.querySelector('.map-discovery-area');
+        area.innerHTML = '演算中...';
+        const worldbookContext = worldbookData.entries
+            .filter(e => e.enabled)
+            .map(e => `[世界观: ${e.title}]\n${e.text}`)
+            .join('\n\n');
+
+        const prompt = getPrompt('exploreNewPlace', { 
+            worldbookContext: worldbookContext || '一个充满刀光剑影与奇珍异宝的幻想古风世界。' 
+        });
+
+        const result = await callLLM(prompt, button); 
+        if (result) {
+            try {
+                const lines = result.trim().split('\n');
+                const placeName = lines[0].replace(/【|】|名称|：|:/g, '').trim();
+                const description = lines.slice(1).join('\n').trim();
+                if (!placeName || !description) throw new Error("返回格式不规范");
+                area.innerHTML = `<h4>你来到了【${placeName}】</h4><p>${description}</p>`;
+            } catch (e) {
+                area.innerHTML = `<h4>探索失败...</h4><p>AI返回的地点信息格式不正确，内容如下：</p><p style="white-space: pre-wrap; opacity: 0.7;">${result}</p>`;
+            }
+        } else { 
+            area.innerHTML = '生成失败...'; 
+        } 
+    }
     function renderCharactersPane() { const loveInterests = characterList.filter(c => c.type === '情缘'); const npcs = characterList.filter(c => c.type === 'NPC'); const createCharacterHTML = (char) => `<div class="character-card"><img src="${char.avatar || BLANK_AVATAR}" alt="${char.name}" onclick="prepareAvatarChange('${char.id}')" title="点击更换头像"><div class="character-info"><div class="name-type"><h4>${char.name}</h4><span class="type-tag">${char.type}</span></div><p>${char.desc}</p></div><div class="character-actions"><button class="action-button-small" onclick="getHeartVoice('${char.id}', this)">心声</button><button class="action-button-small" onclick="getPrivateJournal('${char.id}', this)">私信</button><button class="action-button-small" onclick="openCharacterBackpack('${char.id}')">背包</button><button class="action-button-small" onclick="openCharacterModal('${char.id}')">编辑</button><button class="action-button-small" onclick="deleteCharacter('${char.id}')">删除</button></div></div>`; const loveInterestsHTML = loveInterests.map(createCharacterHTML).join('') || '<p style="text-align:center; opacity:0.7;">暂无情缘人物</p>'; const npcsHTML = npcs.map(createCharacterHTML).join('') || '<p style="text-align:center; opacity:0.7;">暂无NPC人物</p>'; document.getElementById('characters-pane').innerHTML = `<h3 class="content-title"><span class="content-title-main">【 人物志 】</span></h3><div class="controls-group"><span>数量:</span><select id="char-generate-count" style="width:60px;padding:5px;"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select><span>类型:</span><select id="char-generate-type" style="padding:5px;"><option value="情缘">情缘</option><option value="NPC">NPC</option></select><button class="action-button-small" id="gen-char-btn" onclick="generateCharacters(this)">AI生成</button><button class="action-button-small" onclick="openCharacterModal()">自定义</button></div><div class="controls-group"><button class="action-button-small" onclick="clearCharacters('情缘')">清空情缘</button><button class="action-button-small" onclick="clearCharacters('NPC')">清空NPC</button></div><div class="characters-section"><h3>【 情缘 】</h3><div class="characters-list">${loveInterestsHTML}</div></div><div class="characters-section"><h3>【 NPC 】</h3><div class="characters-list">${npcsHTML}</div></div>`; }
-    async function generateCharacters(button) { const count = document.getElementById('char-generate-count').value; const type = document.getElementById('char-generate-type').value; const prompt = `请为一款古风游戏，随机生成 ${count} 位独特的角色。你需要为每个角色提供姓名(name)，以及一段50字左右的简介(desc)。他们的类型(type)固定为 "${type}"。请严格按照以下JSON格式返回，不要包含任何额外的解释或标记: [{"name": "姓名", "type": "${type}", "desc": "简介"}, ...]`; const result = await callLLM(prompt, button); if (result) { try { const newChars = JSON.parse(result.replace(/```json/g, '').replace(/```/g, '')); newChars.forEach(char => characterList.push({ ...char, id: `char-${Date.now()}-${Math.random()}`, avatar: BLANK_AVATAR, heartVoices: [], privateJournals: [], inventory: [] })); saveGameData(); renderCharactersPane(); } catch (e) { showToast("API返回格式错误"); console.error(e, result); } } }
-    async function getHeartVoice(charId, button) { const char = characterList.find(c => c.id === charId); if (!char) return; const prompt = `角色姓名：${char.name}\n人设：${char.desc}\n请基于此人设，用第一人称写一句简短的、符合其身份性格的内心独白（心声），不超过30字。`; const result = await callLLM(prompt, button); if (result) { if (!char.heartVoices) char.heartVoices = []; char.heartVoices.push({ date: new Date().toISOString(), content: result }); saveGameData(); document.getElementById('view-text-modal-title').innerText = `【${char.name}的心声】`; document.getElementById('view-text-modal-content').innerHTML = `<p style="white-space: pre-wrap; line-height: 1.8;">${result}</p>`; document.getElementById('view-text-modal-controls').innerHTML = `<button class="action-button-small" onclick="viewPastRecords('${char.id}', 'heartVoices')">查看过往</button>`; openModal('view-text-modal'); } }
-    async function getPrivateJournal(charId, button) { const char = characterList.find(c => c.id === charId); if (!char) return; const prompt = `角色姓名：${char.name}\n人设：${char.desc}\n请你扮演这位角色，基于他的人设，用第一人称写一篇简短的私密日记或信件，揭露一个秘密、一段往事或一个深藏的愿望。`; const result = await callLLM(prompt, button); if (result) { if (!char.privateJournals) char.privateJournals = []; char.privateJournals.push({ date: new Date().toISOString(), content: result }); saveGameData(); document.getElementById('view-text-modal-title').innerText = `【${char.name}的私信】`; document.getElementById('view-text-modal-content').innerHTML = `<p style="white-space: pre-wrap; line-height: 1.8;">${result}</p>`; document.getElementById('view-text-modal-controls').innerHTML = `<button class="action-button-small" onclick="viewPastRecords('${char.id}', 'privateJournals')">查看过往</button>`; openModal('view-text-modal'); } }
+    async function generateCharacters(button) { const count = document.getElementById('char-generate-count').value; const type = document.getElementById('char-generate-type').value; const prompt = getPrompt('generateCharacters', { count, type }); const result = await callLLM(prompt, button); if (result) { try { const newChars = JSON.parse(result.replace(/```json/g, '').replace(/```/g, '')); newChars.forEach(char => characterList.push({ ...char, id: `char-${Date.now()}-${Math.random()}`, avatar: BLANK_AVATAR, heartVoices: [], privateJournals: [], inventory: [] })); saveGameData(); renderCharactersPane(); renderChatPane(); } catch (e) { showToast("API返回格式错误"); console.error(e, result); } } }
+    async function getHeartVoice(charId, button) { const char = characterList.find(c => c.id === charId); if (!char) return; const prompt = getPrompt('getHeartVoice', { name: char.name, desc: char.desc }); const result = await callLLM(prompt, button); if (result) { if (!char.heartVoices) char.heartVoices = []; char.heartVoices.push({ date: new Date().toISOString(), content: result }); saveGameData(); document.getElementById('view-text-modal-title').innerText = `【${char.name}的心声】`; document.getElementById('view-text-modal-content').innerHTML = `<p style="white-space: pre-wrap; line-height: 1.8;">${result}</p>`; document.getElementById('view-text-modal-controls').innerHTML = `<button class="action-button-small" onclick="viewPastRecords('${char.id}', 'heartVoices')">查看过往</button>`; openModal('view-text-modal'); } }
+    async function getPrivateJournal(charId, button) { const char = characterList.find(c => c.id === charId); if (!char) return; const prompt = getPrompt('getPrivateJournal', { name: char.name, desc: char.desc }); const result = await callLLM(prompt, button); if (result) { if (!char.privateJournals) char.privateJournals = []; char.privateJournals.push({ date: new Date().toISOString(), content: result }); saveGameData(); document.getElementById('view-text-modal-title').innerText = `【${char.name}的私信】`; document.getElementById('view-text-modal-content').innerHTML = `<p style="white-space: pre-wrap; line-height: 1.8;">${result}</p>`; document.getElementById('view-text-modal-controls').innerHTML = `<button class="action-button-small" onclick="viewPastRecords('${char.id}', 'privateJournals')">查看过往</button>`; openModal('view-text-modal'); } }
     function openCharacterBackpack(charId) {
         const char = characterList.find(c => c.id === charId);
         if (!char) return;
@@ -813,7 +937,7 @@
                     <h5>${item.name} ${item.quantity > 1 ? `(x${item.quantity})` : ''}</h5>
                     <p>${item.desc}</p>
                     <div class="footer">
-                       <button class="action-button-small" onclick="giftItemToCharacter('${item.p_inv_id}', '${char.id}')">赠送</button>
+                       <button class="action-button-small" onclick="giftItemToCharacter('${item.p_inv_id}', '${char.id}', this)">赠送</button>
                     </div>
                 </div>`).join('')}</div>`;
         } else {
@@ -823,49 +947,98 @@
         contentDiv.innerHTML = charInventoryHTML + protagonistInventoryHTML;
         openModal('character-backpack-modal');
     }
-    function giftItemToCharacter(p_inv_id, charId) {
+    async function giftItemToCharacter(p_inv_id, charId, button) {
+        button.disabled = true;
         const char = characterList.find(c => c.id === charId);
         const itemIndex = protagonistData.inventory.findIndex(i => i.p_inv_id === p_inv_id);
-
-        if (!char || itemIndex === -1) return;
+        if (!char || itemIndex === -1) { button.disabled = false; return; }
 
         const itemToGift = { ...protagonistData.inventory[itemIndex] };
         
-        // Add to character's inventory
         const charExistingItem = char.inventory.find(i => i.name === itemToGift.name);
         if (charExistingItem) {
             charExistingItem.quantity = (charExistingItem.quantity || 1) + 1;
         } else {
             const giftedItemCopy = { ...itemToGift, quantity: 1 };
-            delete giftedItemCopy.p_inv_id; // Remove protagonist-specific ID
+            delete giftedItemCopy.p_inv_id;
             char.inventory.push(giftedItemCopy);
         }
 
-        // Remove from protagonist's inventory
         if (protagonistData.inventory[itemIndex].quantity > 1) {
             protagonistData.inventory[itemIndex].quantity -= 1;
         } else {
             protagonistData.inventory.splice(itemIndex, 1);
         }
-
-        saveGameData();
-        openCharacterBackpack(charId); // Refresh the modal
-        renderBackpackPane(); // Refresh protagonist's main backpack view
+        
         showToast(`成功赠送 ${itemToGift.name} 给 ${char.name}！`);
+        openCharacterBackpack(charId);
+        renderBackpackPane();
+        
+        // Generate AI reaction
+        const prompt = getPrompt('giftReaction', {
+            charName: char.name,
+            charDesc: char.desc,
+            itemName: itemToGift.name,
+            itemDesc: itemToGift.desc
+        });
+        const reaction = await callLLM(prompt);
+        if (reaction) {
+            if (!chatHistories[charId]) chatHistories[charId] = [];
+            chatHistories[charId].push({ role: 'system', content: `你赠送了【${itemToGift.name}】给${char.name}，${char.name}说：“${reaction}”` });
+            if (activeChatCharacter && activeChatCharacter.id === charId) {
+                renderChatWindow(activeChatCharacter);
+            }
+        }
+        saveGameData();
     }
-    function clearCharacters(type) { if(confirm(`确定要清空所有【${type}】类型的角色吗？`)) { characterList = characterList.filter(c => c.type !== type); saveGameData(); renderCharactersPane(); showToast(`已清空所有${type}角色`); } }
+    function clearCharacters(type) { if(confirm(`确定要清空所有【${type}】类型的角色吗？`)) { characterList = characterList.filter(c => c.type !== type); saveGameData(); renderCharactersPane(); renderChatPane(); showToast(`已清空所有${type}角色`); } }
     function openCharacterModal(charId = null) { const title = document.getElementById('character-modal-title'); const idInput = document.getElementById('character-id'); const nameInput = document.getElementById('character-name'); const typeSelect = document.getElementById('character-type'); const descText = document.getElementById('character-desc'); if (charId) { const char = characterList.find(c => c.id === charId); title.textContent = "编辑人物"; idInput.value = char.id; nameInput.value = char.name; typeSelect.value = char.type; descText.value = char.desc; } else { title.textContent = "自定义人物"; idInput.value = ''; nameInput.value = ''; typeSelect.value = 'NPC'; descText.value = ''; } openModal('character-modal'); }
-    function saveCharacter() { const id = document.getElementById('character-id').value; const name = document.getElementById('character-name').value; if (!name.trim()) { alert('姓名不能为空！'); return; } const updatedChar = { id: id || `char-${Date.now()}-${Math.random()}`, name: name, type: document.getElementById('character-type').value, desc: document.getElementById('character-desc').value }; const index = characterList.findIndex(c => c.id === id); if (index > -1) { characterList[index] = {...characterList[index], ...updatedChar}; } else { characterList.push({...updatedChar, avatar: BLANK_AVATAR, heartVoices: [], privateJournals: [], inventory: []}); } saveGameData(); closeModal(null, 'character-modal'); renderCharactersPane(); }
+    function saveCharacter() { const id = document.getElementById('character-id').value; const name = document.getElementById('character-name').value; if (!name.trim()) { alert('姓名不能为空！'); return; } const updatedChar = { id: id || `char-${Date.now()}-${Math.random()}`, name: name, type: document.getElementById('character-type').value, desc: document.getElementById('character-desc').value }; const index = characterList.findIndex(c => c.id === id); if (index > -1) { characterList[index] = {...characterList[index], ...updatedChar}; } else { characterList.push({...updatedChar, avatar: BLANK_AVATAR, heartVoices: [], privateJournals: [], inventory: []}); } saveGameData(); closeModal(null, 'character-modal'); renderCharactersPane(); renderChatPane(); }
     function deleteCharacter(charId) { if (confirm('确定要删除这位人物吗？')) { characterList = characterList.filter(c => c.id !== charId); delete chatHistories[charId]; saveGameData(); renderCharactersPane(); renderChatPane(); } }
     function viewPastRecords(charId, type) { const char = characterList.find(c => c.id === charId); if (!char) return; const records = char[type] || []; const title = type === 'heartVoices' ? `【${char.name}的心声过往】` : `【${char.name}的私信过往】`; let contentHTML; if (records.length === 0) { contentHTML = `<p style="text-align:center; opacity:0.7;">暂无记录</p>`; } else { contentHTML = records.slice().reverse().map(r => { const dateStr = r.date ? new Date(r.date).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '未知时间'; return `<div class="modal-reply"><b>${dateStr}</b><p style="white-space: pre-wrap; margin: 5px 0 0 0;">${r.content}</p></div>`; }).join(''); } document.getElementById('view-text-modal-title').innerText = title; document.getElementById('view-text-modal-content').innerHTML = contentHTML; document.getElementById('view-text-modal-controls').innerHTML = ''; openModal('view-text-modal'); }
-    function renderChatPane() { const pane = document.getElementById('chat-pane'); const partners = characterList.map(c => `<li data-id="${c.id}" class="${activeChatCharacter && activeChatCharacter.id === c.id ? 'active' : ''}" onclick="selectChatPartner('${c.id}')"><img src="${c.avatar || BLANK_AVATAR}"><span>${c.name}</span></li>`).join(''); const customPartners = customChatPartners.map(c => `<li data-id="${c.id}" class="${activeChatCharacter && activeChatCharacter.id === c.id ? 'active' : ''}" onclick="selectChatPartner('${c.id}')"><img src="${c.avatar || BLANK_AVATAR}" onclick="event.stopPropagation(); prepareAvatarChange('${c.id}')" title="点击更换头像"><span>${c.name}</span><span class="delete-btn" style="margin-left:auto;" onclick="deleteCustomChatPartner('${c.id}', event)">×</span></li>`).join(''); const chatWindowHTML = activeChatCharacter ? renderChatWindow(activeChatCharacter) : `<div style="text-align:center; padding-top: 50px; opacity: 0.7;">请从左侧选择一位人物开始聊天</div>`; pane.innerHTML = `<h3 class="content-title"><span class="content-title-main">【 闲谈 】</span></h3><div class="chat-container"><div class="chat-sidebar"><h4>对话列表</h4><ul class="chat-partner-list">${partners}</ul>${customChatPartners.length > 0 ? `<h4>自定义</h4><ul class="chat-partner-list">${customPartners}</ul>` : ''}<div style="text-align:center; margin-top: 20px;"><button class="action-button-small" onclick="openModal('custom-chat-partner-modal')">添加闲聊对象</button></div></div><div class="chat-window" id="chat-window-main">${chatWindowHTML}</div></div>`; }
+    
+    function renderChatPane() { 
+        const pane = document.getElementById('chat-pane'); 
+        const partners = characterList.map(c => `<li data-id="${c.id}" class="${activeChatCharacter && activeChatCharacter.id === c.id ? 'active' : ''}" onclick="selectChatPartner('${c.id}')"><img src="${c.avatar || BLANK_AVATAR}"><span>${c.name}</span></li>`).join(''); 
+        // [MODIFIED FOR REQ 2 & 3] Changed onclick for custom partners and removed delete 'x' button
+        const customPartners = customChatPartners.map(c => `<li data-id="${c.id}" class="${activeChatCharacter && activeChatCharacter.id === c.id ? 'active' : ''}" onclick="openCustomPartnerActions('${c.id}', '${c.name.replace(/'/g, "\\'")}')"><img src="${c.avatar || BLANK_AVATAR}" onclick="event.stopPropagation(); prepareAvatarChange('${c.id}')" title="点击更换头像"><span>${c.name}</span></li>`).join(''); 
+        const chatWindowHTML = activeChatCharacter ? renderChatWindow(activeChatCharacter) : `<div style="display: flex; align-items: center; justify-content: center; height: 100%; text-align:center; opacity: 0.7;">请从左侧选择一位人物开始聊天</div>`; 
+        
+        // [MODIFIED FOR REQ 1] Adjusted title structure for better icon spacing
+        pane.innerHTML = `
+            <h3 class="content-title">
+                <div style="width: 30px; flex-shrink: 0;"></div> <!-- Left Spacer -->
+                <span class="content-title-main">【 闲谈 】</span>
+                <span class="text-button" style="font-size: 20px; width: 30px; flex-shrink: 0; text-align: right;" title="聊天美化" onclick="openChatBeautifyModal()">🎨</span>
+            </h3>
+            <div class="chat-container">
+                <div class="chat-sidebar">
+                    <h4>对话列表</h4><ul class="chat-partner-list">${partners}</ul>
+                    ${customChatPartners.length > 0 ? `<h4>自定义</h4><ul class="chat-partner-list">${customPartners}</ul>` : ''}
+                    <div style="text-align:center; margin-top: 20px;"><button class="action-button-small" onclick="openModal('custom-chat-partner-modal')">添加闲聊对象</button></div>
+                </div>
+                <div class="chat-window" id="chat-window-main">${chatWindowHTML}</div>
+            </div>`; 
+    }
+    
     function formatMessageContent(content) { const trimmedContent = content.trim(); const imgRegex = /^(https?:\/\/[^\s<>"]+\.(?:png|jpe?g|gif|webp|svg))(\?.*)?$/i; if (imgRegex.test(trimmedContent) || trimmedContent.startsWith('data:image')) { return { html: `<img src="${trimmedContent}" class="chat-image" alt="聊天图片" onclick="window.open('${trimmedContent}', '_blank')">`, isImageOnly: true }; } const escapedContent = content.replace(/</g, "&lt;").replace(/>/g, "&gt;"); return { html: escapedContent, isImageOnly: false }; }
-    function renderChatWindow(character) { const history = chatHistories[character.id] || []; const messagesHTML = history.map(msg => { const { html, isImageOnly } = formatMessageContent(msg.content); const bubbleClasses = isImageOnly ? "bubble image-only" : "bubble"; const avatarSrc = msg.role === 'user' ? protagonistData.avatar : (character.avatar || BLANK_AVATAR); const messageClass = msg.role === 'user' ? "chat-message user" : "chat-message assistant"; return `<div class="${messageClass}"><div class="${bubbleClasses}">${html}</div><img src="${avatarSrc}" class="avatar"></div>`; }).join('');
+    function renderChatWindow(character) {
+        const history = chatHistories[character.id] || [];
+        const messagesHTML = history.map(msg => {
+            if (msg.role === 'system') {
+                return `<div class="chat-message system"><div class="bubble">${msg.content}</div></div>`;
+            }
+            const { html, isImageOnly } = formatMessageContent(msg.content);
+            const bubbleClasses = isImageOnly ? "bubble image-only" : "bubble";
+            const avatarSrc = msg.role === 'user' ? protagonistData.avatar : (character.avatar || BLANK_AVATAR);
+            const messageClass = msg.role === 'user' ? "chat-message user" : "chat-message assistant";
+            return `<div class="${messageClass}"><img src="${avatarSrc}" class="avatar"><div class="${bubbleClasses}">${html}</div></div>`;
+        }).join('');
         const kaomojiHTML = KAOMOJI_LIST.map(e => `<div class="emoji-item" onclick="insertEmoji('${e.replace(/'/g, "\\'")}', 'text')">${e}</div>`).join('');
         const stickersHTML = customEmojis.map(emoji => `<img src="${emoji.url}" class="sticker-item" title="${emoji.name}" onclick="insertEmoji('${emoji.url}', 'image')">`).join('');
         const chatWindowContent = `<div class="chat-messages" id="chat-messages-container">${messagesHTML}</div>
         <div class="chat-input-area">
-            <textarea id="chat-input" class="styled-textarea" rows="3" placeholder="与${character.name}说些什么..."></textarea>
+            <textarea id="chat-input" class="styled-textarea" rows="2" placeholder="与${character.name}说些什么..."></textarea>
             <button class="action-button-small" onclick="toggleEmojiPanel()">表情</button>
             <button id="chat-send-btn" class="action-button-small" onclick="sendChatMessage()">发送</button>
             <div class="emoji-panel hidden" id="emoji-panel">
@@ -889,27 +1062,152 @@
     function insertEmoji(content, type) { const textarea = document.getElementById('chat-input'); if (type === 'image') { textarea.value = content; } else { textarea.value += content; } textarea.focus(); }
     function selectChatPartner(charId) { const character = characterList.find(c => c.id === charId) || customChatPartners.find(c => c.id === charId); if (character) { activeChatCharacter = character; renderChatPane(); } }
     function addCustomChatPartner() { const name = document.getElementById('custom-chat-name').value; const desc = document.getElementById('custom-chat-desc').value; if (!name.trim()) { alert("姓名不能为空"); return; } const newPartner = { id: `custom-${Date.now()}`, name, desc, avatar: BLANK_AVATAR }; customChatPartners.push(newPartner); saveGameData(); closeModal(null, 'custom-chat-partner-modal'); document.getElementById('custom-chat-name').value = ''; document.getElementById('custom-chat-desc').value = ''; renderChatPane(); selectChatPartner(newPartner.id); }
-    function deleteCustomChatPartner(partnerId, event) { event.stopPropagation(); if (confirm('确定删除此闲聊对象及其聊天记录吗？')) { customChatPartners = customChatPartners.filter(p => p.id !== partnerId); delete chatHistories[partnerId]; if (activeChatCharacter && activeChatCharacter.id === partnerId) { activeChatCharacter = null; } saveGameData(); renderChatPane(); } }
-    async function sendChatMessage() { if (!activeChatCharacter) return; const input = document.getElementById('chat-input'); const sendBtn = document.getElementById('chat-send-btn'); const text = input.value.trim(); if (!text) return; if (!chatHistories[activeChatCharacter.id]) chatHistories[activeChatCharacter.id] = []; chatHistories[activeChatCharacter.id].push({ role: 'user', content: text }); input.value = ''; renderChatWindow(activeChatCharacter); const historyForPrompt = (chatHistories[activeChatCharacter.id] || []).map(m => `${m.role === 'user' ? protagonistData.name : activeChatCharacter.name}: ${m.content}`).join('\n'); const prompt = `你现在正在扮演一个古风角色。\n你的角色信息：\n姓名：${activeChatCharacter.name}\n人设：${activeChatCharacter.desc}\n\n你正在和以下角色对话：\n姓名：${protagonistData.name}\n人设：${protagonistData.persona}\n\n以下是你们的对话历史：\n${historyForPrompt}\n\n现在，请根据你的角色设定，对TA的最后一句话做出回应。你的回应要简洁、符合人设，直接输出回应内容，不要带任何前缀或解释。`; const result = await callLLM(prompt, sendBtn); if (result) { chatHistories[activeChatCharacter.id].push({ role: 'assistant', content: result }); saveGameData(); renderChatWindow(activeChatCharacter); } }
+    
+    // [ADDED FOR REQ 2 & 3] Function to open the action modal for custom partners
+    function openCustomPartnerActions(partnerId, partnerName) {
+        document.getElementById('custom-partner-action-title').textContent = partnerName;
+        const selectBtn = document.getElementById('custom-partner-select-btn');
+        const deleteBtn = document.getElementById('custom-partner-delete-btn');
+
+        selectBtn.onclick = () => {
+            selectChatPartner(partnerId);
+            closeModal(null, 'custom-partner-action-modal');
+        };
+        deleteBtn.onclick = () => {
+            deleteCustomChatPartner(partnerId);
+            closeModal(null, 'custom-partner-action-modal');
+        };
+
+        openModal('custom-partner-action-modal');
+    }
+
+    // [MODIFIED FOR REQ 2 & 3] Modified to not require an event object
+    function deleteCustomChatPartner(partnerId, event) { 
+        if(event) event.stopPropagation(); 
+        if (confirm(`确定删除闲聊对象【${customChatPartners.find(p=>p.id === partnerId)?.name}】及其聊天记录吗？`)) { 
+            customChatPartners = customChatPartners.filter(p => p.id !== partnerId); 
+            delete chatHistories[partnerId]; 
+            if (activeChatCharacter && activeChatCharacter.id === partnerId) { activeChatCharacter = null; } 
+            saveGameData(); 
+            renderChatPane(); 
+        } 
+    }
+
+    async function sendChatMessage() { if (!activeChatCharacter) return; const input = document.getElementById('chat-input'); const sendBtn = document.getElementById('chat-send-btn'); const text = input.value.trim(); if (!text) return; if (!chatHistories[activeChatCharacter.id]) chatHistories[activeChatCharacter.id] = []; chatHistories[activeChatCharacter.id].push({ role: 'user', content: text }); input.value = ''; renderChatWindow(activeChatCharacter); const historyForPrompt = (chatHistories[activeChatCharacter.id] || []).filter(m => m.role !== 'system').map(m => `${m.role === 'user' ? protagonistData.name : activeChatCharacter.name}: ${m.content}`).join('\n'); const prompt = getPrompt('sendChatMessage', { charName: activeChatCharacter.name, charDesc: activeChatCharacter.desc, protagonistName: protagonistData.name, protagonistPersona: protagonistData.persona, history: historyForPrompt }); const result = await callLLM(prompt, sendBtn); if (result) { chatHistories[activeChatCharacter.id].push({ role: 'assistant', content: result }); saveGameData(); renderChatWindow(activeChatCharacter); } }
     function uploadEmojis(event) { const files = event.target.files; if (!files.length) return; for (const file of files) { const reader = new FileReader(); reader.onload = e => { const fileName = file.name.split('.').slice(0, -1).join('.') || `贴图_${Date.now()}`; const newEmoji = { name: fileName, url: e.target.result }; if (!customEmojis.some(emoji => emoji.url === newEmoji.url)) customEmojis.push(newEmoji); }; reader.readAsDataURL(file); } setTimeout(() => { saveGameData(); renderEmojiManagementModal(); if(activeChatCharacter) renderChatWindow(activeChatCharacter); showToast(`成功添加 ${files.length} 个贴图！`); }, 500); event.target.value = ''; }
     function importEmojisFromURLs() { const textarea = document.getElementById('emoji-url-import'); const lines = textarea.value.trim().split('\n'); const newEmojis = []; lines.forEach(line => { const parts = line.split(','); if (parts.length >= 2) { const name = parts[0].trim(); const url = parts.slice(1).join(',').trim(); if (name && (url.startsWith('http') || url.startsWith('data:'))) { newEmojis.push({ name, url }); } } }); if (!newEmojis.length) { showToast('未输入有效或格式正确的内容'); return; } const existingUrls = new Set(customEmojis.map(e => e.url)); const uniqueNewEmojis = newEmojis.filter(e => !existingUrls.has(e.url)); customEmojis.push(...uniqueNewEmojis); saveGameData(); renderEmojiManagementModal(); if (activeChatCharacter) renderChatWindow(activeChatCharacter); textarea.value = ''; showToast(`成功导入 ${uniqueNewEmojis.length} 个新贴图！`); }
     function openEmojiManagement() { renderEmojiManagementModal(); openModal('manage-emojis-modal'); }
-    function renderEmojiManagementModal() { const grid = document.getElementById('emoji-management-grid'); grid.innerHTML = customEmojis.map((emoji, index) => `<div class="emoji-management-item"><img src="${emoji.url}" title="${emoji.name}"><p class="emoji-name-display">${emoji.name}</p><input type="checkbox" data-index="${index}"></div>`).join(''); }
+    function renderEmojiManagementModal() { const grid = document.getElementById('emoji-management-grid'); grid.innerHTML = customEmojis.map((emoji, index) => `<div class="emoji-management-item"><img src="${emoji.url}" title="${emoji.name}"><p class="emoji-name-display">${emoji.name}</p><input type="checkbox" data-index="${index}"></div>`).join(''); document.getElementById('toggle-emoji-select').textContent = '全选'; }
+    function toggleSelectAllEmojis(button) {
+        const checkboxes = document.querySelectorAll('#emoji-management-grid input[type="checkbox"]');
+        const shouldSelectAll = button.textContent === '全选';
+        checkboxes.forEach(cb => cb.checked = shouldSelectAll);
+        button.textContent = shouldSelectAll ? '取消全选' : '全选';
+    }
     function deleteSelectedEmojis() { const checkboxes = document.querySelectorAll('#emoji-management-grid input[type="checkbox"]:checked'); if (!checkboxes.length) { showToast('请选择要删除的贴图'); return; } const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)); customEmojis = customEmojis.filter((_, index) => !indicesToDelete.includes(index)); saveGameData(); renderEmojiManagementModal(); if(activeChatCharacter) renderChatWindow(activeChatCharacter); showToast(`成功删除 ${checkboxes.length} 个贴图`); }
     function renderForumPane() { let postsHTML = forumPosts.slice().reverse().map(post => { const deleteButtonHTML = post.author === protagonistData.name ? `<button class="action-button-small" style="position:absolute; top:15px; right:15px; padding: 4px 8px; font-size: 12px;" onclick="deleteForumPost(${post.id}, event)">删除</button>` : ''; return `<div class="forum-post" onclick="viewPost(${post.id})"><h4>${post.author === protagonistData.name ? '【我的】' : ''}${post.title}</h4><p>发帖人: ${post.author} | 回复: ${post.replies.length} | 查看: ${post.views}</p>${deleteButtonHTML}</div>`; }).join(''); document.getElementById('forum-pane').innerHTML = `<h3 class="content-title"><span class="content-title-main">【 江湖论坛 】</span><div style="position: absolute; right: 0;"><span id="forum-refresh-btn" class="text-button" onclick="refreshForum(this)">刷新</span></div></h3><div class="controls-group"><button class="action-button-small" onclick="openModal('new-post-modal')">发布新帖</button></div><div id="forum-posts-list">${postsHTML || '<p style="text-align:center; opacity:0.7;">论坛尚无帖子</p>'}</div>`; }
     function deleteForumPost(postId, event) { event.stopPropagation(); if (confirm('确定要删除这个帖子吗？')) { forumPosts = forumPosts.filter(p => p.id !== postId); saveGameData(); renderForumPane(); } }
-    async function refreshForum(button) { button.textContent = '正在生成中!'; button.setAttribute('disabled', true); const prompt = `这是一个江湖论坛。请你扮演一些江湖人士，随机生成 2-3 个新的论坛帖子。帖子内容要有趣，符合古风武侠背景。请严格按照以下JSON格式返回，不要包含任何额外的解释或标记: [{"title": "帖子标题", "content": "帖子内容", "author": "发帖人姓名"}, ...]`; const result = await callLLM(prompt, null); if (result) { try { const newPosts = JSON.parse(result.replace(/```json/g, '').replace(/```/g, '')); newPosts.forEach(post => { forumPosts.push({ id: Date.now() + Math.random(), title: post.title, content: post.content, author: post.author, replies: [], views: 0 }); }); saveGameData(); showToast(`论坛刷新，新增 ${newPosts.length} 个帖子！`); } catch (e) { showToast("生成新帖失败，API返回格式错误。"); console.error(e, result); } } renderForumPane(); }
+    async function refreshForum(button) { button.textContent = '正在生成中!'; button.setAttribute('disabled', true); const prompt = getPrompt('refreshForum', {}); const result = await callLLM(prompt, null); if (result) { try { const newPosts = JSON.parse(result.replace(/```json/g, '').replace(/```/g, '')); newPosts.forEach(post => { forumPosts.push({ id: Date.now() + Math.random(), title: post.title, content: post.content, author: post.author, replies: [], views: 0 }); }); saveGameData(); showToast(`论坛刷新，新增 ${newPosts.length} 个帖子！`); } catch (e) { showToast("生成新帖失败，API返回格式错误。"); console.error(e, result); } } renderForumPane(); }
     function submitNewPost() { const title = document.getElementById('post-title').value; const content = document.getElementById('post-content').value; if (!title.trim() || !content.trim()) { alert('标题和内容不能为空！'); return; } const newPost = { id: Date.now(), title: title, content: content, author: protagonistData.name, replies: [], views: 0, }; forumPosts.push(newPost); saveGameData(); closeModal(null, 'new-post-modal'); document.getElementById('post-title').value = ''; document.getElementById('post-content').value = ''; renderForumPane(); }
     function viewPost(postId) { const post = forumPosts.find(p => p.id === postId); if (!post) return; post.views++; saveGameData(); const modalContent = document.getElementById('view-post-content'); modalContent.innerHTML = `<span class="modal-close" onclick="closeModal(null, 'view-post-modal')">×</span><h3>${post.title}</h3><p style="opacity:0.7; font-size:14px;">发帖人: ${post.author}</p><p style="line-height:1.8; margin-top:15px; white-space: pre-wrap;">${post.content}</p><div class="modal-replies"><div style="display:flex; justify-content: space-between; align-items:center;"><h4>路人回帖 (<span id="reply-count">${post.replies.length}</span>)</h4><button class="action-button-small" id="refresh-replies-btn" onclick="refreshReplies(${post.id}, this)">刷新回复</button></div><div id="modal-replies-list">${post.replies.map(r => `<div class="modal-reply"><b>${r.author}:</b> ${r.text}</div>`).join('') || '<p style="opacity:0.7">暂无回复</p>'}</div></div>`; openModal('view-post-modal'); renderForumPane(); }
-    async function refreshReplies(postId, button) { const post = forumPosts.find(p => p.id === postId); if (!post) return; const prompt = `这是一个江湖论坛的帖子。\n标题：'${post.title}'\n内容：'${post.content}'\n请你扮演3-6位风格各异的江湖路人，为这个帖子生成一批新的、有趣的回复。每个回复需要有作者(author)和内容(text)。请严格按照以下JSON格式返回: [{"author": "作者名", "text": "回复内容"}, ...]`; const result = await callLLM(prompt, button); if (result) { try { const newReplies = JSON.parse(result.replace(/```json/g, '').replace(/```/g, '')); post.replies.push(...newReplies); saveGameData(); const listContainer = document.getElementById('modal-replies-list'); const countSpan = document.getElementById('reply-count'); if (listContainer.querySelector('p')) listContainer.innerHTML = ''; newReplies.forEach(reply => { const replyDiv = document.createElement('div'); replyDiv.className = 'modal-reply'; replyDiv.innerHTML = `<b>${reply.author}:</b> ${reply.text}`; listContainer.appendChild(replyDiv); }); countSpan.textContent = post.replies.length; renderForumPane(); } catch (e) { showToast("API返回格式错误"); } } }
-    function updateWorldbookContent(entryId) { const contentDiv = document.querySelector('.worldbook-content'); if (!entryId) { contentDiv.innerHTML = `<p style="text-align:center; opacity:0.7;">请选择或添加一个条目。</p>`; return; } const entry = worldbookData.entries.find(e => e.id === entryId); if (!entry) return; contentDiv.innerHTML = `<h4 contenteditable="true" onblur="updateWorldbookEntryTitle(this, '${entry.id}')">${entry.title}</h4><p contenteditable="true" onblur="updateWorldbookEntryText(this, '${entry.id}')" style="white-space: pre-wrap;">${entry.text}</p>`; }
+    async function refreshReplies(postId, button) { const post = forumPosts.find(p => p.id === postId); if (!post) return; const prompt = getPrompt('refreshReplies', { title: post.title, content: post.content }); const result = await callLLM(prompt, button); if (result) { try { const newReplies = JSON.parse(result.replace(/```json/g, '').replace(/```/g, '')); post.replies.push(...newReplies); saveGameData(); const listContainer = document.getElementById('modal-replies-list'); const countSpan = document.getElementById('reply-count'); if (listContainer.querySelector('p')) listContainer.innerHTML = ''; newReplies.forEach(reply => { const replyDiv = document.createElement('div'); replyDiv.className = 'modal-reply'; replyDiv.innerHTML = `<b>${reply.author}:</b> ${reply.text}`; listContainer.appendChild(replyDiv); }); countSpan.textContent = post.replies.length; renderForumPane(); } catch (e) { showToast("API返回格式错误"); } } }
+    
+    // [MODIFIED FOR REQ 5] Add char count and oninput listener
+    function updateWorldbookContent(entryId) { 
+        const contentDiv = document.querySelector('.worldbook-content'); 
+        const navItems = document.querySelectorAll('#worldbook-list li'); 
+        navItems.forEach(item => item.classList.remove('active')); 
+        const activeItem = document.querySelector(`#worldbook-list li[data-entry-id="${entryId}"]`); 
+        if(activeItem) activeItem.classList.add('active'); 
+        if (!entryId) { 
+            contentDiv.innerHTML = `<p style="text-align:center; opacity:0.7;">请选择或添加一个条目。</p>`; 
+            return; 
+        } 
+        const entry = worldbookData.entries.find(e => e.id === entryId); 
+        if (!entry) return;
+        const charCount = entry.text.length;
+        contentDiv.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px;">
+                <h4 contenteditable="true" onblur="updateWorldbookEntryTitle(this, '${entry.id}')">${entry.title}</h4>
+                <span id="worldbook-char-count" style="font-size: 12px; opacity: 0.7;">字数: ${charCount}</span>
+            </div>
+            <p contenteditable="true" 
+               onblur="updateWorldbookEntryText(this, '${entry.id}')" 
+               oninput="updateWorldbookCharCount(this)"
+               style="white-space: pre-wrap; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;">${entry.text}</p>`;
+    }
+
+    // [ADDED FOR REQ 5] Function to update the character count display in real-time
+    function updateWorldbookCharCount(element) {
+        const countSpan = document.getElementById('worldbook-char-count');
+        if (countSpan) {
+            countSpan.textContent = `字数: ${element.innerText.length}`;
+        }
+    }
+    
     function updateWorldbookEntryTitle(element, entryId) { const newTitle = element.textContent.trim(); if (!newTitle) { element.textContent = worldbookData.entries.find(e => e.id === entryId).title; showToast("标题不能为空！"); return; } const entry = worldbookData.entries.find(e => e.id === entryId); if (entry) entry.title = newTitle; const navItemSpan = document.querySelector(`#worldbook-list li[data-entry-id="${entryId}"] span:first-child`); if (navItemSpan) navItemSpan.textContent = newTitle; saveGameData(); }
     function updateWorldbookEntryText(element, entryId) { const entry = worldbookData.entries.find(e => e.id === entryId); if(entry) entry.text = element.innerText; saveGameData(); }
     function updateWorldbookTitle(element) { worldbookData.title = element.textContent; saveGameData(); }
-    function submitNewWorldbookEntry() { const title = document.getElementById('entry-title').value; const content = document.getElementById('entry-content').value; if (!title.trim() || !content.trim()) { alert('标题和内容不能为空！'); return; } worldbookData.entries.push({ id: `custom-${Date.now()}`, title: title, text: content }); saveGameData(); closeModal(null, 'new-worldbook-entry-modal'); document.getElementById('entry-title').value = ''; document.getElementById('entry-content').value = ''; renderWorldbookPane(); }
+    function submitNewWorldbookEntry() { const title = document.getElementById('entry-title').value; const content = document.getElementById('entry-content').value; if (!title.trim() || !content.trim()) { alert('标题和内容不能为空！'); return; } worldbookData.entries.push({ id: `custom-${Date.now()}`, title: title, text: content, enabled: true }); saveGameData(); closeModal(null, 'new-worldbook-entry-modal'); document.getElementById('entry-title').value = ''; document.getElementById('entry-content').value = ''; renderWorldbookPane(); }
     function deleteWorldbookEntry(entryId, event) { event.stopPropagation(); if (confirm('确定要删除这个条目吗？')) { worldbookData.entries = worldbookData.entries.filter(e => e.id !== entryId); saveGameData(); renderWorldbookPane(); } }
     
-    // --- API & 数据管理 ---
+    function renderMapPane() {
+        const customLocationsHTML = mapData.customLocations.length > 0
+            ? mapData.customLocations.map(loc => `
+                <div class="custom-location-card">
+                    <span class="delete-btn" onclick="deleteCustomLocation('${loc.id}')">×</span>
+                    <h5>${loc.name}</h5>
+                    <p>${loc.desc}</p>
+                </div>`).join('')
+            : '<p style="text-align:center; opacity:0.7;">暂无自定义地点</p>';
+
+        document.getElementById('map-pane').innerHTML = `
+            <h3 class="content-title"><span class="content-title-main">【 天下舆图 】</span></h3>
+            <div class="section-box">
+                <h4>AI 探索</h4>
+                <div class="controls-group"><button class="action-button-small" id="explore-btn" onclick="exploreNewPlace(this)">游历四方</button></div>
+                <div class="map-discovery-area">请点击“游历四方”开始探索...</div>
+            </div>
+            <div class="section-box">
+                <h4>我的地理志</h4>
+                <div class="controls-group"><button class="action-button-small" onclick="openModal('custom-location-modal')">添加自定义地点</button></div>
+                <div class="custom-location-list">${customLocationsHTML}</div>
+            </div>`;
+    }
+
+    function saveCustomLocation() {
+        const nameInput = document.getElementById('custom-location-name');
+        const descInput = document.getElementById('custom-location-desc');
+        const name = nameInput.value.trim();
+        const desc = descInput.value.trim();
+
+        if (!name || !desc) {
+            showToast('地点名称和描述不能为空！');
+            return;
+        }
+
+        mapData.customLocations.push({
+            id: `loc-${Date.now()}`,
+            name: name,
+            desc: desc
+        });
+
+        saveGameData();
+        closeModal(null, 'custom-location-modal');
+        nameInput.value = '';
+        descInput.value = '';
+        renderMapPane();
+        showToast(`已成功添加地点：${name}`);
+    }
+
+    function deleteCustomLocation(locationId) {
+        if (confirm('确定要删除这个自定义地点吗？')) {
+            mapData.customLocations = mapData.customLocations.filter(loc => loc.id !== locationId);
+            saveGameData();
+            renderMapPane();
+        }
+    }
+
     function renderApiPane() {
         let saveSlotsHTML = '';
         for (let i = 1; i <= 3; i++) {
@@ -1007,14 +1305,14 @@
             return;
         }
 
-        if (selectedIndex === '--new--' || selectedIndex === '-1') { // Adding new
+        if (selectedIndex === '--new--' || selectedIndex === '-1') {
             if (apiProviders.some(p => p.name === name)) {
                 showToast('已存在同名配置！');
                 return;
             }
             apiProviders.push({ name, url, key });
             showToast(`已添加新配置: ${name}`);
-        } else { // Updating existing
+        } else {
             const providerIndex = parseInt(selectedIndex);
             if (apiProviders[providerIndex].name !== name && apiProviders.some(p => p.name === name)) {
                 showToast('已存在同名配置！');
@@ -1026,7 +1324,6 @@
         
         saveGameData();
         renderApiPane();
-        // Reselect the saved provider
         const newIndex = apiProviders.findIndex(p => p.name === name);
         if (newIndex > -1) {
             document.getElementById('api-provider-select').value = newIndex;
@@ -1048,7 +1345,6 @@
 
         if (confirm(`确定要删除配置“${providerName}”吗？`)) {
             apiProviders.splice(providerIndex, 1);
-            // If the deleted provider was the active one, clear active settings
             if (localStorage.getItem('gameApiName') === providerName) {
                 localStorage.removeItem('gameApiName');
                 localStorage.removeItem('gameApiUrl');
@@ -1073,12 +1369,10 @@
             localStorage.setItem('gameApiUrl', provider.url);
             localStorage.setItem('gameApiKey', provider.key);
             showToast(`已将“${provider.name}”设为当前连接。`);
-            renderApiPane(); // Re-render to show '(当前)' status
+            renderApiPane();
         }
     }
 
-
-    // ----- 存档系统 -----
     function saveToSlot(slotNumber) {
         if (confirm(`确定要将当前进度保存到【存档位 ${slotNumber}】吗？这会覆盖该存档位之前的数据。`)) {
             saveGameData();
@@ -1170,7 +1464,123 @@
     function showLoader() { document.getElementById('loader').style.display = 'flex'; }
     function hideLoader() { document.getElementById('loader').style.display = 'none'; }
     function showToast(message) { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3000); }
-    function renderMapPane() { document.getElementById('map-pane').innerHTML = `<h3 class="content-title"><span class="content-title-main">【 天下舆图 】</span></h3><div class="controls-group"><button class="action-button-small" id="explore-btn" onclick="exploreNewPlace(this)">游历四方</button></div><div class="map-discovery-area">请点击“游历四方”开始探索...</div>`; }
+    
+    function loadChatBeautifySettings() {
+        const bgUrl = localStorage.getItem('chatBgUrl');
+        const userCss = localStorage.getItem('chatUserBubbleCss');
+        const assistantCss = localStorage.getItem('chatAssistantBubbleCss');
+        const styleTag = document.getElementById('custom-chat-styles');
+        if (!styleTag) return;
+        
+        let customCss = '';
+        if (bgUrl) {
+            customCss += `#chat-messages-container { background-image: url('${bgUrl}') !important; }`;
+        }
+        if (userCss) {
+            customCss += `.chat-message.user .bubble { ${userCss} }`;
+        }
+        if (assistantCss) {
+            customCss += `.chat-message.assistant .bubble { ${assistantCss} }`;
+        }
+        styleTag.innerHTML = customCss;
+    }
+
+    function openChatBeautifyModal() {
+        document.getElementById('chat-bg-url').value = localStorage.getItem('chatBgUrl') || '';
+        document.getElementById('user-bubble-css').value = localStorage.getItem('chatUserBubbleCss') || '';
+        document.getElementById('assistant-bubble-css').value = localStorage.getItem('chatAssistantBubbleCss') || '';
+        openModal('chat-beautify-modal');
+    }
+
+    function applyChatBeautifySettings() {
+        const bgUrl = document.getElementById('chat-bg-url').value.trim();
+        const userCss = document.getElementById('user-bubble-css').value.trim();
+        const assistantCss = document.getElementById('assistant-bubble-css').value.trim();
+
+        localStorage.setItem('chatBgUrl', bgUrl);
+        localStorage.setItem('chatUserBubbleCss', userCss);
+        localStorage.setItem('chatAssistantBubbleCss', assistantCss);
+        
+        loadChatBeautifySettings();
+        closeModal(null, 'chat-beautify-modal');
+        showToast('聊天界面样式已应用！');
+    }
+
+    function resetChatBeautifySettings() {
+        if (confirm('确定要恢复聊天界面的默认样式吗？')) {
+            localStorage.removeItem('chatBgUrl');
+            localStorage.removeItem('chatUserBubbleCss');
+            localStorage.removeItem('chatAssistantBubbleCss');
+            loadChatBeautifySettings();
+            closeModal(null, 'chat-beautify-modal');
+            showToast('聊天界面样式已重置。');
+        }
+    }
+    
+    function getDefaultPrompts() {
+        return {
+            generateJournal: { title: "生成记事", template: "我正在玩一个古风养成游戏，我的角色是：\n姓名：${name}\n人设：${persona}\n请为我生成 ${count} 条连续的记事。记事内容要简洁、符合古风背景和我的身份，且每条记事不少于50字。请直接返回一个用换行符分隔的列表，不要添加编号。", },
+            generateCharacters: { title: "生成人物", template: "请为一款古风游戏，随机生成 ${count} 位独特的角色。你需要为每个角色提供姓名(name)，以及一段50字左右的简介(desc)。他们的类型(type)固定为 \"${type}\"。请严格按照以下JSON格式返回，不要包含任何额外的解释或标记: [{\"name\": \"姓名\", \"type\": \"${type}\", \"desc\": \"简介\"}, ...]", },
+            getHeartVoice: { title: "人物心声", template: "角色姓名：${name}\n人设：${desc}\n请基于此人设，用第一人称写一句简短的、符合其身份性格的内心独白（心声），不超过30字。", },
+            getPrivateJournal: { title: "人物私信", template: "角色姓名：${name}\n人设：${desc}\n请你扮演这位角色，基于他的人设，用第一人称写一篇简短的私密日记或信件，揭露一个秘密、一段往事或一个深藏的愿望。", },
+            refreshForum: { title: "刷新论坛帖子", template: "这是一个江湖论坛。请你扮演一些江湖人士，随机生成 2-3 个新的论坛帖子。帖子内容要有趣，符合古风武侠背景。请严格按照以下JSON格式返回，不要包含任何额外的解释或标记: [{\"title\": \"帖子标题\", \"content\": \"帖子内容\", \"author\": \"发帖人姓名\"}, ...]", },
+            refreshReplies: { title: "刷新帖子回复", template: "这是一个江湖论坛的帖子。\n标题：'${title}'\n内容：'${content}'\n请你扮演3-6位风格各异的江湖路人，为这个帖子生成一批新的、有趣的回复。每个回复需要有作者(author)和内容(text)。请严格按照以下JSON格式返回: [{\"author\": \"作者名\", \"text\": \"回复内容\"}, ...]", },
+            sendChatMessage: { title: "聊天对话", template: "你现在正在扮演一个古风角色。\n你的角色信息：\n姓名：${charName}\n人设：${charDesc}\n\n你正在和以下角色对话：\n姓名：${protagonistName}\n人设：${protagonistPersona}\n\n以下是你们的对话历史：\n${history}\n\n现在，请根据你的角色设定，对TA的最后一句话做出回应。你的回应要简洁、符合人设，直接输出回应内容，不要带任何前缀或解释。", },
+            refreshMarketplace: { title: "刷新市集货品", template: "你是一位古风游戏的设计师。请为市集随机生成 ${itemCount} 件独特的物品。物品可以是装备、丹药、奇珍、书籍等。每件物品需要包含名称(name)，一段约50字的描述(desc)，以及一个整数价格(price)。\n\n提示：你可以参考以下角色信息来生成一些他们可能感兴趣的物品，以增加世界真实感：\n${characterNeedsContext}\n\n请严格按照以下JSON格式返回，不要包含任何额外的解释或标记: [{\"name\": \"物品名称\", \"desc\": \"一段约50字的描述\", \"price\": 整数价格}, ...]", },
+            exploreNewPlace: { title: "探索新地点", template: "你是一位才华横溢的游戏文案。请基于以下提供的世界观设定，为我的游戏角色生成一个TA可能探索到的、全新的、充满神秘感和想象力的地点。请先给出这个地点的【名称】，然后换行，再给出不少于200字的详细【场景描述】。描述需要充满氛围感，并与世界观紧密相连。\n\n[提供的世界观]\n${worldbookContext}", },
+            giftReaction: { title: "赠送礼物反应", template: "你扮演的角色 ${charName}（人设：${charDesc}），刚刚收到了玩家赠送的一件礼物。\n礼物名称：${itemName}\n礼物描述：${itemDesc}\n请根据你的角色人设，对此事做出一句简短的、符合身份的反应（例如感谢、评价、疑惑等），直接输出这句反应即可，不要带任何前缀。", },
+        };
+    }
+    function getPrompt(key, replacements) {
+        let template = promptTemplates[key]?.template || '';
+        for (const varName in replacements) {
+            template = template.replace(new RegExp(`\\$\\{${varName}\\}`, 'g'), replacements[varName]);
+        }
+        return template;
+    }
+    function renderPromptsPane() {
+        const pane = document.getElementById('prompts-pane');
+        let html = `<h3 class="content-title"><span class="content-title-main">【 天机阁 】</span></h3>
+                    <p style="text-align:center; opacity:0.7; font-size:14px; margin-top:-15px; margin-bottom:20px;">在这里，你可以修改所有与AI交互的指令模板。</p>
+                    <div class="controls-group">
+                        <button class="action-button-small" onclick="saveAllPrompts()">保存所有修改</button>
+                        <button class="action-button-small" onclick="resetAllPrompts()">恢复默认设置</button>
+                    </div>`;
+        for (const key in promptTemplates) {
+            const item = promptTemplates[key];
+            html += `
+                <div class="section-box">
+                    <h4>${item.title}</h4>
+                    <textarea class="styled-textarea" data-prompt-key="${key}" rows="8" style="font-size: 14px; line-height: 1.6;">${item.template}</textarea>
+                </div>`;
+        }
+        pane.innerHTML = html;
+    }
+    function saveAllPrompts() {
+        const textareas = document.querySelectorAll('#prompts-pane textarea[data-prompt-key]');
+        let changesMade = false;
+        textareas.forEach(ta => {
+            const key = ta.dataset.promptKey;
+            if (promptTemplates[key] && promptTemplates[key].template !== ta.value) {
+                promptTemplates[key].template = ta.value;
+                changesMade = true;
+            }
+        });
+        if (changesMade) {
+            saveGameData();
+            showToast("所有AI指令已保存！");
+        } else {
+            showToast("未检测到任何修改。");
+        }
+    }
+    function resetAllPrompts() {
+        if (confirm("确定要将所有AI指令恢复为默认设置吗？您所做的任何修改都将丢失。")) {
+            promptTemplates = getDefaultPrompts();
+            saveGameData();
+            renderPromptsPane();
+            showToast("AI指令已全部恢复默认。");
+        }
+    }
     </script>
 </body>
 </html>
