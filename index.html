@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
     <style id="custom-font-styles"></style>
     <style id="custom-chat-styles"></style>
+    <style id="custom-per-chat-styles"></style> <!-- [NEW FOR REQ 3] For individual chat beautification -->
     <style>
         :root {
             --primary-red: #4A0E0E; --dark-red: #8C1B1B; --primary-gold: #D4AF37; --light-gold: #E0C068;
@@ -86,18 +87,18 @@
         .worldbook-nav li:hover .controls { display: flex; }
         .worldbook-nav li .delete-entry { cursor: pointer; } 
         .worldbook-content { flex-grow: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; overflow-y: auto; }
-        .writing-style-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 15px; }
-        .writing-style-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
-        .writing-style-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .writing-style-header h5 { margin: 0; flex-grow: 1; cursor: pointer; color: var(--light-gold); }
-        .writing-style-header .controls { display: flex; align-items: center; gap: 10px; }
+        .rule-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 15px; } 
+        .rule-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; } 
+        .rule-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; } 
+        .rule-header h5 { margin: 0; flex-grow: 1; cursor: pointer; color: var(--light-gold); } 
+        .rule-header .controls { display: flex; align-items: center; gap: 10px; } 
         .toggle-switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary-gold); }
         input:checked + .slider:before { transform: translateX(20px); }
-        .writing-style-content { display: none; margin-top: 10px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; cursor: pointer; }
+        .rule-content { display: none; margin-top: 10px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; cursor: pointer; } 
         
         .beautify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .beautify-column { display: flex; flex-direction: column; gap: 20px; }
@@ -138,15 +139,19 @@
         .character-info p { margin: 0; font-size: 14px; opacity: 0.8; }
         .character-actions { display: flex; flex-direction: column; justify-content: center; gap: 8px; flex-wrap: wrap; }
         
-        /* ---------- CHAT INTERFACE REWORK START ---------- */
-        .chat-container { display: flex; flex-grow: 1; gap: 20px; min-height: 0; }
-        .chat-sidebar { width: 220px; flex-shrink: 0; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; overflow-y: auto; }
-        .chat-sidebar h4 { margin: 0 0 10px; text-align: center; color: var(--light-gold); }
-        .chat-partner-list { list-style: none; padding: 0; margin: 10px 0; }
-        .chat-partner-list li { display: flex; align-items: center; gap: 10px; padding: 10px; cursor: pointer; border-radius: 4px; margin-bottom: 5px; }
-        .chat-partner-list li:hover, .chat-partner-list li.active { background: var(--primary-gold); color: var(--primary-red); }
-        .chat-partner-list img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .chat-window { flex-grow: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .chat-selection-view { display: flex; flex-direction: column; height: 100%;}
+        .chat-partner-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 20px; overflow-y: auto; }
+        .chat-partner-card { cursor: pointer; text-align: center; width: 120px; transition: transform 0.2s; }
+        .chat-partner-card:hover { transform: scale(1.05); }
+        .chat-partner-card img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); margin-bottom: 10px; }
+        .chat-partner-card p { margin: 0; }
+        .chat-individual-view { display: flex; flex-direction: column; height: 100%; }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0 10px; border-bottom: 2px solid var(--border-color); flex-shrink: 0; }
+        .chat-header .back-button { font-size: 24px; cursor: pointer; user-select: none; width: 40px; }
+        .chat-header .char-name { font-size: 20px; letter-spacing: 3px; }
+        .chat-header .chat-actions-button { font-size: 20px; cursor: pointer; user-select: none; width: 40px; text-align: center; letter-spacing: 2px; } /* [NEW FOR REQ 1] */
+        .chat-header .beautify-button { font-size: 20px; cursor: pointer; user-select: none; width: 40px; text-align: right; }
+        
         .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; background-size: cover; background-position: center; transition: background-image 0.5s;}
         .chat-message { display: flex; margin-bottom: 20px; max-width: 80%; align-items: flex-end; }
         .chat-message .avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
@@ -169,13 +174,13 @@
         .emoji-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; background: rgba(0,0,0,0.2); }
         .emoji-tab.active { background: var(--primary-gold); color: var(--primary-red); }
         .emoji-panel-content { padding: 10px; max-height: 200px; overflow-y: auto; }
-        .emoji-page { display: none; } .emoji-page.active { display: grid; }
-        #kaomoji-page { grid-template-columns: repeat(3, 1fr); gap: 5px; }
-        #sticker-page { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .emoji-page { display: none; } .emoji-page.active { display: block; } 
+        #kaomoji-page { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; } 
         .emoji-item { cursor: pointer; padding: 5px; text-align: center; border-radius: 4px; font-size: 16px; } .emoji-item:hover { background: var(--primary-gold); color: var(--primary-red); }
+        .sticker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; } 
         .sticker-item { width: 100%; height: 60px; object-fit: contain; cursor: pointer; transition: transform 0.2s; }
         .sticker-item:hover { transform: scale(1.1); }
-        /* ---------- CHAT INTERFACE REWORK END ---------- */
+        .sticker-category-title { color: var(--light-gold); text-align: center; margin: 15px 0 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; font-size: 14px; } 
         
         .forum-post { position: relative; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: background 0.2s; }
         .api-section { margin-bottom: 25px; }
@@ -190,11 +195,22 @@
         .modal-replies { margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px; }
         .modal-reply { font-size: 14px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; margin-bottom: 10px; }
         .modal-reply b { color: var(--light-gold); }
-        .emoji-management-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; max-height: 30vh; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 15px;}
+        
+        /* [NEW FOR REQ 3] Sticker Management Styles */
+        #manage-emojis-modal .modal-content { display: flex; flex-direction: column; height: 80vh; max-height: 700px; }
+        .emoji-management-controls { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .emoji-management-content { flex-grow: 1; overflow-y: auto; padding-right: 10px;}
+        .emoji-group { margin-bottom: 20px; }
+        .emoji-group-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 10px; }
+        .emoji-group-header h5 { margin: 0; color: var(--light-gold); }
+        .emoji-group-header label { user-select: none; }
+        .emoji-management-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
         .emoji-management-item { position: relative; text-align: center; }
-        .emoji-management-item img { width: 100%; height: 60px; object-fit: contain; border-radius: 4px; }
-        .emoji-management-item .emoji-name-display { font-size: 12px; margin: 5px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .emoji-management-item input[type="checkbox"] { position: absolute; top: 5px; right: 5px; }
+        .emoji-management-item label { display: block; cursor: pointer; }
+        .emoji-management-item img { width: 100%; height: 60px; object-fit: contain; border-radius: 4px; display: block; }
+        .emoji-management-item input[type="checkbox"] { margin-top: 5px; }
+        .emoji-management-item .delete-btn { position: absolute; top: -5px; right: -5px; font-size: 18px; background: var(--primary-red); border-radius: 50%; width: 20px; height: 20px; line-height: 20px; }
+
         #loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; color: var(--light-gold); font-size: 20px; }
         .spinner { width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--primary-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -207,17 +223,18 @@
         .hidden { display: none; }
         .dragging { opacity: 0.5; background: #555; }
 
+        /* [NEW FOR REQ 1] Chat Actions Menu */
+        #chat-actions-menu { position: absolute; z-index: 1001; background: var(--dark-red); border: 1px solid var(--primary-gold); border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); padding: 5px; }
+        #chat-actions-menu .action-item { padding: 8px 12px; cursor: pointer; border-radius: 4px; }
+        #chat-actions-menu .action-item:hover { background: var(--primary-gold); color: var(--primary-red); }
+
         /* Responsive Styles */
         @media (max-width: 768px) {
             body { padding: 0; }
             #toast-container { bottom: 70px; }
             .game-container { width: 100%; height: 100vh; flex-direction: column; border-radius: 0; border: none; box-shadow: none; }
             .game-nav { order: 2; width: 100%; height: auto; flex-direction: row; justify-content: flex-start; padding: 5px 10px; gap: 10px; border-right: none; border-top: 2px solid var(--border-color); flex-shrink: 0; z-index: 10; overflow-x: auto; box-sizing: border-box; }
-            .game-main-content { 
-                order: 1; 
-                flex-grow: 1;
-                min-height: 0;
-            }
+            .game-main-content { order: 1; flex-grow: 1; min-height: 0; }
             .nav-button { writing-mode: initial; text-orientation: initial; padding: 8px 12px; font-size: 14px; letter-spacing: 1px; flex-grow: 0; text-align: center; width: auto; flex-shrink: 0; white-space: nowrap; }
             .game-main-content { padding: 15px; }
             .controls-group { gap: 15px; }
@@ -228,9 +245,9 @@
             .character-card { flex-direction: column; text-align: center; }
             .character-info .name-type { justify-content: center; gap: 15px; margin-bottom: 10px; }
             .character-actions { flex-direction: row; justify-content: center; padding: 10px 0; gap: 10px; flex-wrap: wrap; }
-            .chat-container { flex-direction: column; height: auto; flex-grow: 1; gap: 10px; }
-            .chat-sidebar { width: 100%; max-height: 150px; margin-bottom: 0; flex-shrink: 0; }
-            .chat-window { flex-grow: 1; }
+            .chat-partner-card { width: 90px; }
+            .chat-partner-card img { width: 70px; height: 70px; }
+            .chat-header .char-name { font-size: 18px; }
             .modal-content { width: 90vw; max-width: 400px; padding: 20px; }
             .worldbook-main { flex-direction: column; min-height: unset; height: auto; }
             .worldbook-nav { width: 100%; max-height: 120px; }
@@ -239,10 +256,7 @@
             .save-slot-group .action-button-small { width: 100%; box-sizing: border-box; }
             .map-discovery-area { min-height: 200px; }
             .beautify-grid { grid-template-columns: 1fr; }
-            .delete-btn, .custom-font-item .delete-btn {
-                padding: 5px 10px;
-                font-size: 22px;
-            }
+            .delete-btn, .custom-font-item .delete-btn { padding: 5px 10px; font-size: 22px; }
         }
     </style>
 </head>
@@ -287,9 +301,28 @@
     </div>
 
     <!-- Modals -->
-    <div id="writing-style-modal" class="modal-overlay" onclick="closeModal(event, 'writing-style-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'writing-style-modal')">×</span><h3 id="writing-style-modal-title"></h3><input type="hidden" id="writing-style-id"><div class="form-group"><label for="writing-style-title">标题:</label><input type="text" id="writing-style-title"></div>
-    <!-- [MODIFIED FOR REQ 2] Added char count to writing style modal -->
-    <div class="form-group"><label for="writing-style-content" style="display: flex; justify-content: space-between;"><span>内容 (规则):</span><span id="writing-style-char-count" style="font-size: 12px; opacity: 0.7;">字数: 0</span></label><textarea id="writing-style-content" rows="8" oninput="document.getElementById('writing-style-char-count').textContent = '字数: ' + this.value.length;"></textarea></div><div style="text-align:center;"><button class="action-button-small" onclick="saveWritingStyle()">保存</button></div></div></div>
+    <div id="rule-modal" class="modal-overlay" onclick="closeModal(event, 'rule-modal')">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal(null, 'rule-modal')">×</span>
+            <h3 id="rule-modal-title"></h3>
+            <input type="hidden" id="rule-id">
+            <input type="hidden" id="rule-type">
+            <div class="form-group">
+                <label for="rule-title">标题:</label>
+                <input type="text" id="rule-title">
+            </div>
+            <div class="form-group">
+                <label for="rule-content" style="display: flex; justify-content: space-between;">
+                    <span>内容 (规则):</span>
+                    <span id="rule-char-count" style="font-size: 12px; opacity: 0.7;">字数: 0</span>
+                </label>
+                <textarea id="rule-content" rows="8" oninput="document.getElementById('rule-char-count').textContent = '字数: ' + this.value.length;"></textarea>
+            </div>
+            <div style="text-align:center;">
+                <button class="action-button-small" onclick="saveRule()">保存</button>
+            </div>
+        </div>
+    </div>
     <div id="character-modal" class="modal-overlay" onclick="closeModal(event, 'character-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'character-modal')">×</span><h3 id="character-modal-title">自定义人物</h3><input type="hidden" id="character-id"><div class="form-group"><label for="character-name">姓名:</label><input type="text" id="character-name"></div><div class="form-group"><label for="character-type">类型:</label><select id="character-type"><option value="NPC">NPC</option><option value="情缘">情缘</option></select></div><div class="form-group"><label for="character-desc">人设:</label><textarea id="character-desc" rows="6"></textarea></div><div style="text-align:center;"><button class="action-button-small" onclick="saveCharacter()">保存人物</button></div></div></div>
     <div id="character-backpack-modal" class="modal-overlay" onclick="closeModal(event, 'character-backpack-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'character-backpack-modal')">×</span><h3 id="character-backpack-title"></h3><div id="character-backpack-content"></div></div></div>
     <div id="custom-chat-partner-modal" class="modal-overlay" onclick="closeModal(event, 'custom-chat-partner-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'custom-chat-partner-modal')">×</span><h3>添加自定义闲聊对象</h3><div class="form-group"><label for="custom-chat-name">姓名:</label><input type="text" id="custom-chat-name"></div><div class="form-group"><label for="custom-chat-desc">人设:</label><textarea id="custom-chat-desc" rows="4"></textarea></div><div style="text-align:center;"><button class="action-button-small" onclick="addCustomChatPartner()">添加对象</button></div></div></div>
@@ -297,24 +330,32 @@
     <div id="view-post-modal" class="modal-overlay" onclick="closeModal(event, 'view-post-modal')"><div class="modal-content" id="view-post-content"></div></div>
     <div id="new-worldbook-entry-modal" class="modal-overlay" onclick="closeModal(event, 'new-worldbook-entry-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'new-worldbook-entry-modal')">×</span><h3>【 添加新条目 】</h3><div class="form-group"><label for="entry-title">条目标题:</label><input type="text" id="entry-title"></div><div class="form-group"><label for="entry-content">条目内容:</label><textarea id="entry-content" rows="6"></textarea></div><div style="text-align:center;"><button class="action-button-small" onclick="submitNewWorldbookEntry()">添加</button></div></div></div>
     <div id="view-text-modal" class="modal-overlay" onclick="closeModal(event, 'view-text-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'view-text-modal')">×</span><div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;"><h3 id="view-text-modal-title" style="margin: 0;"></h3><div id="view-text-modal-controls"></div></div><div id="view-text-modal-content" style="max-height: 50vh; overflow-y: auto; padding-right: 10px;"></div></div></div>
-    <div id="manage-emojis-modal" class="modal-overlay" onclick="closeModal(event, 'manage-emojis-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'manage-emojis-modal')">×</span><h3>【 管理我的贴图 】</h3>
-        <div id="emoji-management-grid"></div>
-        <div class="form-group" style="margin-top: 15px;">
-            <label>批量导入链接 (格式: 名称,链接地址):</label>
-            <textarea id="emoji-url-import" rows="4" placeholder="可爱猫猫,https://.../cat.gif\n哭泣狗狗,https://.../dog.png"></textarea>
+    
+    <!-- [MODIFIED FOR REQ 3] Emoji Management Modal Reworked -->
+    <div id="manage-emojis-modal" class="modal-overlay" onclick="closeModal(event, 'manage-emojis-modal')">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal(null, 'manage-emojis-modal')">×</span>
+            <h3>【 管理我的贴图 】</h3>
+            <div class="emoji-management-controls">
+                <button class="action-button-small" onclick="deleteSelectedEmojis()">删除选中</button>
+                <button class="action-button-small" onclick="document.getElementById('emoji-uploader').click()">本地上传</button>
+                <button class="action-button-small" onclick="importEmojisFromURLs()">从链接导入</button>
+            </div>
+            <div class="form-group">
+                <label>批量导入链接 (格式: 名称,链接地址):</label>
+                <textarea id="emoji-url-import" rows="3" placeholder="可爱猫猫,https://.../cat.gif\n哭泣狗狗,https://.../dog.png"></textarea>
+            </div>
+            <div class="emoji-management-content" id="emoji-management-groups">
+                <!-- Groups will be rendered here by JS -->
+            </div>
         </div>
-        <div class="controls-group" style="margin-top:20px;">
-            <button class="action-button-small" onclick="document.getElementById('emoji-uploader').click()">本地上传</button>
-            <button class="action-button-small" onclick="importEmojisFromURLs()">从链接导入</button>
-            <button class="action-button-small" id="toggle-emoji-select" onclick="toggleSelectAllEmojis(this)">全选</button>
-            <button class="action-button-small" onclick="deleteSelectedEmojis()">删除选中</button>
-        </div>
-    </div></div>
+    </div>
+    
     <div id="custom-location-modal" class="modal-overlay" onclick="closeModal(event, 'custom-location-modal')"><div class="modal-content"><span class="modal-close" onclick="closeModal(null, 'custom-location-modal')">×</span><h3>【 添加自定义地点 】</h3><div class="form-group"><label for="custom-location-name">地点名称:</label><input type="text" id="custom-location-name"></div><div class="form-group"><label for="custom-location-desc">地点描述:</label><textarea id="custom-location-desc" rows="6"></textarea></div><div style="text-align:center;"><button class="action-button-small" onclick="saveCustomLocation()">保存地点</button></div></div></div>
     <div id="chat-beautify-modal" class="modal-overlay" onclick="closeModal(event, 'chat-beautify-modal')">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal(null, 'chat-beautify-modal')">×</span>
-            <h3>聊天界面美化</h3>
+            <h3 id="chat-beautify-modal-title">聊天界面美化</h3>
             <div class="form-group">
                 <label for="chat-bg-url">背景图链接:</label>
                 <input type="text" id="chat-bg-url" class="styled-textarea" placeholder="输入图片URL或留空使用默认背景">
@@ -343,7 +384,6 @@
             </div>
         </div>
     </div>
-    <!-- [ADDED FOR REQ 1] Generic confirmation modal -->
     <div id="confirmation-modal" class="modal-overlay" onclick="closeModal(event, 'confirmation-modal')">
         <div class="modal-content" style="width: auto; max-width: 400px;">
             <span class="modal-close" onclick="closeModal(null, 'confirmation-modal')">×</span>
@@ -353,6 +393,12 @@
                 <button class="action-button-small" onclick="closeModal(null, 'confirmation-modal')">取消</button>
             </div>
         </div>
+    </div>
+    
+    <!-- [NEW FOR REQ 1] Chat Actions Pop-up Menu -->
+    <div id="chat-actions-menu" class="hidden">
+        <div class="action-item" id="chat-action-heart-voice">获取新心声</div>
+        <div class="action-item" id="chat-action-private-journal">获取新私信</div>
     </div>
 
 
@@ -374,13 +420,20 @@
         
         loadGameData();
         applyFontSettings();
-        loadChatBeautifySettings(); 
 
         renderAllPanes();
         setInterval(updateModernTime, 1000);
         document.getElementById('avatar-uploader').addEventListener('change', handleAvatarUpload);
         document.getElementById('data-importer').addEventListener('change', importData);
         document.getElementById('emoji-uploader').addEventListener('change', uploadEmojis);
+
+        // [NEW FOR REQ 1] Global listener to close chat actions menu
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('chat-actions-menu');
+            if (!menu.classList.contains('hidden') && !menu.contains(event.target) && !event.target.classList.contains('chat-actions-button')) {
+                menu.classList.add('hidden');
+            }
+        });
     });
 
     function saveGameData() {
@@ -407,11 +460,7 @@
             marketplaceData = data.marketplaceData || { lastRefreshed: null, items: [] };
             promptTemplates = data.promptTemplates || getDefaultPrompts();
             mapData = data.mapData || { customLocations: [] };
-            if (data.customEmojis && data.customEmojis.length > 0 && typeof data.customEmojis[0] === 'string') {
-                customEmojis = data.customEmojis.map((url, index) => ({ name: `贴图_${index + 1}`, url }));
-            } else {
-                customEmojis = data.customEmojis || [];
-            }
+            customEmojis = data.customEmojis || [];
         } else {
             initGameData();
         }
@@ -423,11 +472,18 @@
         if (characterList && characterList.some(c => !c.hasOwnProperty('inventory'))) {
             characterList.forEach(c => { if (!c.inventory) c.inventory = []; });
         }
+        if (characterList && characterList.some(c => !c.hasOwnProperty('heartVoices'))) {
+            characterList.forEach(c => { if (!c.heartVoices) c.heartVoices = []; });
+        }
+        if (characterList && characterList.some(c => !c.hasOwnProperty('privateJournals'))) {
+            characterList.forEach(c => { if (!c.privateJournals) c.privateJournals = []; });
+        }
         if (typeof worldbookData.writingStyle === 'string') {
             worldbookData.writingStyles = { title: "文风设定", entries: [{ id: `ws-${Date.now()}`, title: "默认文风", content: worldbookData.writingStyle, enabled: true }] };
             delete worldbookData.writingStyle;
         }
         if (!worldbookData.writingStyles) worldbookData.writingStyles = { title: "文风设定", entries: [] };
+        if (!worldbookData.breakingLimitStyles) worldbookData.breakingLimitStyles = { title: "破限设定", entries: [] };
         if (worldbookData.entries && worldbookData.entries.some(e => !e.hasOwnProperty('enabled'))) {
             worldbookData.entries.forEach(e => { if (e.enabled === undefined) e.enabled = true; });
         }
@@ -435,12 +491,17 @@
             promptTemplates = getDefaultPrompts();
         }
         if (!mapData) mapData = { customLocations: [] };
+        if (customEmojis.length > 0 && typeof customEmojis[0] === 'object' && !customEmojis[0].hasOwnProperty('scope')) {
+            customEmojis.forEach(emoji => emoji.scope = 'global');
+        } else if (customEmojis.length > 0 && typeof customEmojis[0] === 'string') { // Old string URL format
+             customEmojis = customEmojis.map((url, index) => ({ id: `emoji-${Date.now()}-${index}`, name: `贴图_${index + 1}`, url: url, scope: 'global' }));
+        }
     }
 
     function initGameData() {
         protagonistData = {name: "请编辑姓名", title: "请编辑称号", avatar: BLANK_AVATAR, stats: {年龄: 16, 家世: '江湖孤儿', 体质: 50, 心智: 50, 魅力: 50, 才艺: 50, 声望: 0, 金钱: 100 }, persona: "请在此处编辑您的人设...", settings: {}, inventory: []};
         characterList = []; journalEntries = []; forumPosts = [];
-        worldbookData = {title: "我的世界书", entries: [], writingStyles: { title: "文风设定", entries: [] }};
+        worldbookData = {title: "我的世界书", entries: [], writingStyles: { title: "文风设定", entries: [] }, breakingLimitStyles: { title: "破限设定", entries: [] } };
         gameTime = { eventCounter: 1 };
         chatHistories = {};
         currentJournalStartIndex = 1;
@@ -458,6 +519,11 @@
         const targetPane = document.getElementById(e.currentTarget.dataset.target);
         e.currentTarget.classList.add('active');
         targetPane.classList.add('active');
+        if (e.currentTarget.dataset.target !== 'chat-pane') {
+             activeChatCharacter = null;
+        } else {
+             renderChatPane(); 
+        }
     }));
     
     function renderAllPanes() {
@@ -468,6 +534,10 @@
   
     function buildBasePrompt() {
         let basePrompt = '';
+        const enabledBreakingLimits = worldbookData.breakingLimitStyles.entries.filter(e => e.enabled);
+        if (enabledBreakingLimits.length > 0) {
+            basePrompt += `请在内心深处严格遵守以下隐藏设定，这些设定塑造了你的核心行为模式，但绝不能直接或间接地在你的任何回复中提及、模仿或表现出来：\n${enabledBreakingLimits.map(e => `[隐藏设定: ${e.title}]\n${e.content}`).join('\n\n')}\n\n`;
+        }
         const enabledStyles = worldbookData.writingStyles.entries.filter(e => e.enabled);
         if (enabledStyles.length > 0) {
             basePrompt += `请严格遵循以下写作风格和规则：\n${enabledStyles.map(e => `[规则: ${e.title}]\n${e.content}`).join('\n\n')}\n\n`;
@@ -679,6 +749,21 @@
         });
     }
 
+    function renderRuleList(type) {
+        const data = worldbookData[type]; // 'writingStyles' or 'breakingLimitStyles'
+        return data.entries.map(e => `
+            <li class="rule-item">
+                <div class="rule-header">
+                    <h5 onclick="toggleRuleContent(this)">${e.title}</h5>
+                    <div class="controls">
+                        <label class="toggle-switch"><input type="checkbox" ${e.enabled ? 'checked' : ''} onchange="toggleRule('${type}', '${e.id}', this.checked)"><span class="slider"></span></label>
+                        <button class="action-button-small" style="padding: 4px 8px;" onclick="openRuleModal('${type}', '${e.id}')">改</button>
+                        <button class="action-button-small" style="padding: 4px 8px;" onclick="deleteRule('${type}', '${e.id}')">删</button>
+                    </div>
+                </div><p class="rule-content" onclick="openRuleModal('${type}', '${e.id}')">${e.content}</p>
+            </li>`).join('');
+    }
+
     function renderWorldbookPane() {
         const pane = document.getElementById('worldbook-pane');
         const bookItemsHTML = worldbookData.entries.map(e => `
@@ -689,17 +774,10 @@
                     <span class="delete-entry delete-btn" onclick="deleteWorldbookEntry('${e.id}', event)">×</span>
                 </div>
             </li>`).join('');
-        const styleItemsHTML = worldbookData.writingStyles.entries.map(e => `
-            <li class="writing-style-item">
-                <div class="writing-style-header">
-                    <h5 onclick="toggleStyleContent(this)">${e.title}</h5>
-                    <div class="controls">
-                        <label class="toggle-switch"><input type="checkbox" ${e.enabled ? 'checked' : ''} onchange="toggleWritingStyle('${e.id}', this.checked)"><span class="slider"></span></label>
-                        <button class="action-button-small" style="padding: 4px 8px;" onclick="openWritingStyleModal('${e.id}')">改</button>
-                        <button class="action-button-small" style="padding: 4px 8px;" onclick="deleteWritingStyle('${e.id}')">删</button>
-                    </div>
-                </div><p class="writing-style-content" onclick="openWritingStyleModal('${e.id}')">${e.content}</p>
-            </li>`).join('');
+
+        const styleItemsHTML = renderRuleList('writingStyles');
+        const breakingLimitItemsHTML = renderRuleList('breakingLimitStyles'); 
+
         pane.innerHTML = `<div class="worldbook-container">
                 <div class="section-box" style="flex:1;">
                     <h4 contenteditable="true" onblur="updateWorldbookTitle(this)">${worldbookData.title}</h4>
@@ -707,9 +785,14 @@
                     <div class="worldbook-main"><nav class="worldbook-nav"><ul id="worldbook-list">${bookItemsHTML}</ul></nav><div class="worldbook-content"></div></div>
                 </div>
                 <div class="section-box" style="flex:1; overflow-y: auto;">
+                    <h4>${worldbookData.breakingLimitStyles.title} <span style="font-size: 12px; opacity: 0.7;">(隐藏设定, 不会直接出现在文中)</span></h4>
+                    <div class="controls-group"><button class="action-button-small" onclick="openRuleModal('breakingLimitStyles')">添加破限</button></div>
+                    <ul class="rule-list">${breakingLimitItemsHTML}</ul>
+                </div>
+                <div class="section-box" style="flex:1; overflow-y: auto;">
                     <h4>${worldbookData.writingStyles.title}</h4>
-                    <div class="controls-group"><button class="action-button-small" onclick="openWritingStyleModal()">添加文风</button></div>
-                    <ul class="writing-style-list">${styleItemsHTML}</ul>
+                    <div class="controls-group"><button class="action-button-small" onclick="openRuleModal('writingStyles')">添加文风</button></div>
+                    <ul class="rule-list">${styleItemsHTML}</ul>
                 </div></div>`;
         
         const list = pane.querySelector('#worldbook-list');
@@ -726,31 +809,69 @@
             showToast(`世界观“${entry.title}”已${isEnabled ? '开启' : '关闭'}`);
         }
     }
-    function toggleStyleContent(element) { const content = element.parentElement.nextElementSibling; content.style.display = content.style.display === 'block' ? 'none' : 'block'; }
-    function openWritingStyleModal(id = null) {
-        const modalTitle = document.getElementById('writing-style-modal-title'); const idInput = document.getElementById('writing-style-id');
-        const titleInput = document.getElementById('writing-style-title'); const contentInput = document.getElementById('writing-style-content');
-        if (id) { const entry = worldbookData.writingStyles.entries.find(e => e.id === id); modalTitle.textContent = "编辑文风"; idInput.value = id; titleInput.value = entry.title; contentInput.value = entry.content;
-        } else { modalTitle.textContent = "添加文风"; idInput.value = ''; titleInput.value = ''; contentInput.value = ''; }
-        // [MODIFIED FOR REQ 2] Set initial char count
-        document.getElementById('writing-style-char-count').textContent = '字数: ' + contentInput.value.length;
-        openModal('writing-style-modal');
+    function toggleRuleContent(element) { const content = element.parentElement.nextElementSibling; content.style.display = content.style.display === 'block' ? 'none' : 'block'; }
+    
+    function openRuleModal(type, id = null) {
+        const typeData = worldbookData[type];
+        const modalTitle = document.getElementById('rule-modal-title');
+        const idInput = document.getElementById('rule-id');
+        const typeInput = document.getElementById('rule-type');
+        const titleInput = document.getElementById('rule-title');
+        const contentInput = document.getElementById('rule-content');
+        
+        typeInput.value = type;
+        if (id) {
+            const entry = typeData.entries.find(e => e.id === id);
+            modalTitle.textContent = "编辑" + typeData.title.slice(0, 2);
+            idInput.value = id;
+            titleInput.value = entry.title;
+            contentInput.value = entry.content;
+        } else {
+            modalTitle.textContent = "添加" + typeData.title.slice(0, 2);
+            idInput.value = '';
+            titleInput.value = '';
+            contentInput.value = '';
+        }
+        document.getElementById('rule-char-count').textContent = '字数: ' + contentInput.value.length;
+        openModal('rule-modal');
     }
-    function saveWritingStyle() {
-        const id = document.getElementById('writing-style-id').value; const title = document.getElementById('writing-style-title').value;
-        const content = document.getElementById('writing-style-content').value; if (!title.trim() || !content.trim()) return alert('标题和内容不能为空！');
-        if (id) { const entry = worldbookData.writingStyles.entries.find(e => e.id === id); entry.title = title; entry.content = content; } 
-        else { worldbookData.writingStyles.entries.push({ id: `ws-${Date.now()}`, title, content, enabled: true }); }
-        saveGameData(); closeModal(null, 'writing-style-modal'); renderWorldbookPane();
+
+    function saveRule() {
+        const type = document.getElementById('rule-type').value;
+        const id = document.getElementById('rule-id').value;
+        const title = document.getElementById('rule-title').value;
+        const content = document.getElementById('rule-content').value;
+        if (!title.trim() || !content.trim()) return alert('标题和内容不能为空！');
+        
+        const typeData = worldbookData[type];
+        if (id) {
+            const entry = typeData.entries.find(e => e.id === id);
+            entry.title = title;
+            entry.content = content;
+        } else {
+            typeData.entries.push({ id: `rule-${Date.now()}`, title, content, enabled: true });
+        }
+        saveGameData();
+        closeModal(null, 'rule-modal');
+        renderWorldbookPane();
     }
-    function deleteWritingStyle(id) { 
-        showConfirmationModal('确定删除此文风条目？', () => {
-            worldbookData.writingStyles.entries = worldbookData.writingStyles.entries.filter(e => e.id !== id); 
+
+    function deleteRule(type, id) { 
+        showConfirmationModal('确定删除此条目？', () => {
+            worldbookData[type].entries = worldbookData[type].entries.filter(e => e.id !== id); 
             saveGameData(); 
             renderWorldbookPane(); 
         });
     }
-    function toggleWritingStyle(id, isEnabled) { const entry = worldbookData.writingStyles.entries.find(e => e.id === id); if (entry) { entry.enabled = isEnabled; saveGameData(); showToast(`文风“${entry.title}”已${isEnabled ? '开启' : '关闭'}`); } }
+
+    function toggleRule(type, id, isEnabled) {
+        const entry = worldbookData[type].entries.find(e => e.id === id);
+        if (entry) {
+            entry.enabled = isEnabled;
+            saveGameData();
+            showToast(`“${entry.title}”已${isEnabled ? '开启' : '关闭'}`);
+        }
+    }
 
     function renderBeautifyPane() {
         const pane = document.getElementById('beautify-pane');
@@ -931,10 +1052,58 @@
             area.innerHTML = '生成失败...'; 
         } 
     }
-    function renderCharactersPane() { const loveInterests = characterList.filter(c => c.type === '情缘'); const npcs = characterList.filter(c => c.type === 'NPC'); const createCharacterHTML = (char) => `<div class="character-card"><img src="${char.avatar || BLANK_AVATAR}" alt="${char.name}" onclick="prepareAvatarChange('${char.id}')" title="点击更换头像"><div class="character-info"><div class="name-type"><h4>${char.name}</h4><span class="type-tag">${char.type}</span></div><p>${char.desc}</p></div><div class="character-actions"><button class="action-button-small" onclick="getHeartVoice('${char.id}', this)">心声</button><button class="action-button-small" onclick="getPrivateJournal('${char.id}', this)">私信</button><button class="action-button-small" onclick="openCharacterBackpack('${char.id}')">背包</button><button class="action-button-small" onclick="openCharacterModal('${char.id}')">编辑</button><button class="action-button-small" onclick="deleteCharacter('${char.id}')">删除</button></div></div>`; const loveInterestsHTML = loveInterests.map(createCharacterHTML).join('') || '<p style="text-align:center; opacity:0.7;">暂无情缘人物</p>'; const npcsHTML = npcs.map(createCharacterHTML).join('') || '<p style="text-align:center; opacity:0.7;">暂无NPC人物</p>'; document.getElementById('characters-pane').innerHTML = `<h3 class="content-title"><span class="content-title-main">【 人物志 】</span></h3><div class="controls-group"><span>数量:</span><select id="char-generate-count" style="width:60px;padding:5px;"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select><span>类型:</span><select id="char-generate-type" style="padding:5px;"><option value="情缘">情缘</option><option value="NPC">NPC</option></select><button class="action-button-small" id="gen-char-btn" onclick="generateCharacters(this)">AI生成</button><button class="action-button-small" onclick="openCharacterModal()">自定义</button></div><div class="controls-group"><button class="action-button-small" onclick="clearCharacters('情缘')">清空情缘</button><button class="action-button-small" onclick="clearCharacters('NPC')">清空NPC</button></div><div class="characters-section"><h3>【 情缘 】</h3><div class="characters-list">${loveInterestsHTML}</div></div><div class="characters-section"><h3>【 NPC 】</h3><div class="characters-list">${npcsHTML}</div></div>`; }
+    // [MODIFIED FOR REQ 1] Removed "Heart Voice" and "Private Journal" buttons
+    function renderCharactersPane() { const loveInterests = characterList.filter(c => c.type === '情缘'); const npcs = characterList.filter(c => c.type === 'NPC'); const createCharacterHTML = (char) => `<div class="character-card"><img src="${char.avatar || BLANK_AVATAR}" alt="${char.name}" onclick="prepareAvatarChange('${char.id}')" title="点击更换头像"><div class="character-info"><div class="name-type"><h4>${char.name}</h4><span class="type-tag">${char.type}</span></div><p>${char.desc}</p></div><div class="character-actions"><button class="action-button-small" onclick="openCharacterBackpack('${char.id}')">背包</button><button class="action-button-small" onclick="openCharacterModal('${char.id}')">编辑</button><button class="action-button-small" onclick="deleteCharacter('${char.id}')">删除</button></div></div>`; const loveInterestsHTML = loveInterests.map(createCharacterHTML).join('') || '<p style="text-align:center; opacity:0.7;">暂无情缘人物</p>'; const npcsHTML = npcs.map(createCharacterHTML).join('') || '<p style="text-align:center; opacity:0.7;">暂无NPC人物</p>'; document.getElementById('characters-pane').innerHTML = `<h3 class="content-title"><span class="content-title-main">【 人物志 】</span></h3><div class="controls-group"><span>数量:</span><select id="char-generate-count" style="width:60px;padding:5px;"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select><span>类型:</span><select id="char-generate-type" style="padding:5px;"><option value="情缘">情缘</option><option value="NPC">NPC</option></select><button class="action-button-small" id="gen-char-btn" onclick="generateCharacters(this)">AI生成</button><button class="action-button-small" onclick="openCharacterModal()">自定义</button></div><div class="controls-group"><button class="action-button-small" onclick="clearCharacters('情缘')">清空情缘</button><button class="action-button-small" onclick="clearCharacters('NPC')">清空NPC</button></div><div class="characters-section"><h3>【 情缘 】</h3><div class="characters-list">${loveInterestsHTML}</div></div><div class="characters-section"><h3>【 NPC 】</h3><div class="characters-list">${npcsHTML}</div></div>`; }
     async function generateCharacters(button) { const count = document.getElementById('char-generate-count').value; const type = document.getElementById('char-generate-type').value; const prompt = getPrompt('generateCharacters', { count, type }); const result = await callLLM(prompt, button); if (result) { try { const newChars = JSON.parse(result.replace(/```json/g, '').replace(/```/g, '')); newChars.forEach(char => characterList.push({ ...char, id: `char-${Date.now()}-${Math.random()}`, avatar: BLANK_AVATAR, heartVoices: [], privateJournals: [], inventory: [] })); saveGameData(); renderCharactersPane(); renderChatPane(); } catch (e) { showToast("API返回格式错误"); console.error(e, result); } } }
-    async function getHeartVoice(charId, button) { const char = characterList.find(c => c.id === charId); if (!char) return; const prompt = getPrompt('getHeartVoice', { name: char.name, desc: char.desc }); const result = await callLLM(prompt, button); if (result) { if (!char.heartVoices) char.heartVoices = []; char.heartVoices.push({ date: new Date().toISOString(), content: result }); saveGameData(); document.getElementById('view-text-modal-title').innerText = `【${char.name}的心声】`; document.getElementById('view-text-modal-content').innerHTML = `<p style="white-space: pre-wrap; line-height: 1.8;">${result}</p>`; document.getElementById('view-text-modal-controls').innerHTML = `<button class="action-button-small" onclick="viewPastRecords('${char.id}', 'heartVoices')">查看过往</button>`; openModal('view-text-modal'); } }
-    async function getPrivateJournal(charId, button) { const char = characterList.find(c => c.id === charId); if (!char) return; const prompt = getPrompt('getPrivateJournal', { name: char.name, desc: char.desc }); const result = await callLLM(prompt, button); if (result) { if (!char.privateJournals) char.privateJournals = []; char.privateJournals.push({ date: new Date().toISOString(), content: result }); saveGameData(); document.getElementById('view-text-modal-title').innerText = `【${char.name}的私信】`; document.getElementById('view-text-modal-content').innerHTML = `<p style="white-space: pre-wrap; line-height: 1.8;">${result}</p>`; document.getElementById('view-text-modal-controls').innerHTML = `<button class="action-button-small" onclick="viewPastRecords('${char.id}', 'privateJournals')">查看过往</button>`; openModal('view-text-modal'); } }
+    
+    // [NEW/MODIFIED FOR REQ 1 & 2] Functions to handle character actions from within chat
+    function openChatActionsMenu(buttonElement, charId) {
+        const menu = document.getElementById('chat-actions-menu');
+        const rect = buttonElement.getBoundingClientRect();
+        menu.style.top = `${rect.bottom + 5}px`;
+        menu.style.right = `${window.innerWidth - rect.right}px`;
+        
+        document.getElementById('chat-action-heart-voice').onclick = (e) => generateAndShowRecord(charId, 'heartVoices', e.currentTarget);
+        document.getElementById('chat-action-private-journal').onclick = (e) => generateAndShowRecord(charId, 'privateJournals', e.currentTarget);
+
+        menu.classList.remove('hidden');
+    }
+
+    async function generateAndShowRecord(charId, type, button) {
+        document.getElementById('chat-actions-menu').classList.add('hidden');
+        const char = characterList.find(c => c.id === charId);
+        if (!char) return;
+
+        const promptKey = type === 'heartVoices' ? 'getHeartVoice' : 'getPrivateJournal';
+        const prompt = getPrompt(promptKey, { name: char.name, desc: char.desc });
+        const result = await callLLM(prompt, button);
+        
+        if (result) {
+            const newRecord = { date: new Date().toISOString(), content: result };
+            if (!char[type]) char[type] = [];
+            char[type].push(newRecord);
+            saveGameData();
+
+            const title = type === 'heartVoices' ? `【${char.name}的心声】` : `【${char.name}的私信】`;
+            const records = char[type] || [];
+            
+            let pastRecordsHTML = records.slice(0, -1).reverse().map(r => {
+                const dateStr = r.date ? new Date(r.date).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '未知时间';
+                return `<div class="modal-reply"><b>${dateStr}</b><p style="white-space: pre-wrap; margin: 5px 0 0 0;">${r.content}</p></div>`;
+            }).join('');
+            
+            let newRecordHTML = `<div class="modal-reply" style="border-left: 2px solid var(--primary-gold); background: rgba(224, 192, 104, 0.1);"><b>刚刚</b><p style="white-space: pre-wrap; margin: 5px 0 0 0;">${result}</p></div>`;
+            if (pastRecordsHTML) {
+                newRecordHTML += `<h4 style="text-align:center; opacity:0.7; margin: 20px 0 15px;">--- 过往记录 ---</h4>`;
+            }
+
+            document.getElementById('view-text-modal-title').innerText = title;
+            document.getElementById('view-text-modal-content').innerHTML = newRecordHTML + pastRecordsHTML;
+            document.getElementById('view-text-modal-controls').innerHTML = '';
+            openModal('view-text-modal');
+        }
+    }
+
     function openCharacterBackpack(charId) {
         const char = characterList.find(c => c.id === charId);
         if (!char) return;
@@ -1003,7 +1172,7 @@
             if (!chatHistories[charId]) chatHistories[charId] = [];
             chatHistories[charId].push({ role: 'system', content: `你赠送了【${itemToGift.name}】给${char.name}，${char.name}说：“${reaction}”` });
             if (activeChatCharacter && activeChatCharacter.id === charId) {
-                renderChatWindow(activeChatCharacter);
+                renderChatPane();
             }
         }
         saveGameData();
@@ -1020,7 +1189,6 @@
     function openCharacterModal(charId = null) { const title = document.getElementById('character-modal-title'); const idInput = document.getElementById('character-id'); const nameInput = document.getElementById('character-name'); const typeSelect = document.getElementById('character-type'); const descText = document.getElementById('character-desc'); if (charId) { const char = characterList.find(c => c.id === charId); title.textContent = "编辑人物"; idInput.value = char.id; nameInput.value = char.name; typeSelect.value = char.type; descText.value = char.desc; } else { title.textContent = "自定义人物"; idInput.value = ''; nameInput.value = ''; typeSelect.value = 'NPC'; descText.value = ''; } openModal('character-modal'); }
     function saveCharacter() { const id = document.getElementById('character-id').value; const name = document.getElementById('character-name').value; if (!name.trim()) { alert('姓名不能为空！'); return; } const updatedChar = { id: id || `char-${Date.now()}-${Math.random()}`, name: name, type: document.getElementById('character-type').value, desc: document.getElementById('character-desc').value }; const index = characterList.findIndex(c => c.id === id); if (index > -1) { characterList[index] = {...characterList[index], ...updatedChar}; } else { characterList.push({...updatedChar, avatar: BLANK_AVATAR, heartVoices: [], privateJournals: [], inventory: []}); } saveGameData(); closeModal(null, 'character-modal'); renderCharactersPane(); renderChatPane(); }
     
-    // [MODIFIED FOR REQ 1] Replaced confirm with custom modal
     function deleteCharacter(charId) {
         const char = characterList.find(c => c.id === charId);
         if (!char) return;
@@ -1034,70 +1202,108 @@
         });
     }
 
-    function viewPastRecords(charId, type) { const char = characterList.find(c => c.id === charId); if (!char) return; const records = char[type] || []; const title = type === 'heartVoices' ? `【${char.name}的心声过往】` : `【${char.name}的私信过往】`; let contentHTML; if (records.length === 0) { contentHTML = `<p style="text-align:center; opacity:0.7;">暂无记录</p>`; } else { contentHTML = records.slice().reverse().map(r => { const dateStr = r.date ? new Date(r.date).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '未知时间'; return `<div class="modal-reply"><b>${dateStr}</b><p style="white-space: pre-wrap; margin: 5px 0 0 0;">${r.content}</p></div>`; }).join(''); } document.getElementById('view-text-modal-title').innerText = title; document.getElementById('view-text-modal-content').innerHTML = contentHTML; document.getElementById('view-text-modal-controls').innerHTML = ''; openModal('view-text-modal'); }
-    
-    function renderChatPane() { 
-        const pane = document.getElementById('chat-pane'); 
-        const partners = characterList.map(c => `<li data-id="${c.id}" class="${activeChatCharacter && activeChatCharacter.id === c.id ? 'active' : ''}" onclick="selectChatPartner('${c.id}')"><img src="${c.avatar || BLANK_AVATAR}"><span>${c.name}</span></li>`).join(''); 
-        const customPartners = customChatPartners.map(c => `<li data-id="${c.id}" class="${activeChatCharacter && activeChatCharacter.id === c.id ? 'active' : ''}" onclick="openCustomPartnerActions('${c.id}', '${c.name.replace(/'/g, "\\'")}')"><img src="${c.avatar || BLANK_AVATAR}" onclick="event.stopPropagation(); prepareAvatarChange('${c.id}')" title="点击更换头像"><span>${c.name}</span></li>`).join(''); 
-        const chatWindowHTML = activeChatCharacter ? renderChatWindow(activeChatCharacter) : `<div style="display: flex; align-items: center; justify-content: center; height: 100%; text-align:center; opacity: 0.7;">请从左侧选择一位人物开始聊天</div>`; 
-        
-        pane.innerHTML = `
-            <h3 class="content-title">
-                <div style="width: 30px; flex-shrink: 0;"></div>
-                <span class="content-title-main">【 闲谈 】</span>
-                <span class="text-button" style="font-size: 20px; width: 30px; flex-shrink: 0; text-align: right;" title="聊天美化" onclick="openChatBeautifyModal()">🎨</span>
-            </h3>
-            <div class="chat-container">
-                <div class="chat-sidebar">
-                    <h4>对话列表</h4><ul class="chat-partner-list">${partners}</ul>
-                    ${customChatPartners.length > 0 ? `<h4>自定义</h4><ul class="chat-partner-list">${customPartners}</ul>` : ''}
-                    <div style="text-align:center; margin-top: 20px;"><button class="action-button-small" onclick="openModal('custom-chat-partner-modal')">添加闲聊对象</button></div>
-                </div>
-                <div class="chat-window" id="chat-window-main">${chatWindowHTML}</div>
-            </div>`; 
+    function renderChatPane() {
+        const pane = document.getElementById('chat-pane');
+        if (activeChatCharacter) {
+            pane.innerHTML = renderIndividualChatView(activeChatCharacter);
+            const messagesContainer = document.getElementById('chat-messages-container');
+            if(messagesContainer) messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            applyPerChatBeautify(activeChatCharacter);
+        } else {
+            pane.innerHTML = renderChatSelectionView();
+            applyPerChatBeautify(null); 
+        }
     }
-    
-    function formatMessageContent(content) { const trimmedContent = content.trim(); const imgRegex = /^(https?:\/\/[^\s<>"]+\.(?:png|jpe?g|gif|webp|svg))(\?.*)?$/i; if (imgRegex.test(trimmedContent) || trimmedContent.startsWith('data:image')) { return { html: `<img src="${trimmedContent}" class="chat-image" alt="聊天图片" onclick="window.open('${trimmedContent}', '_blank')">`, isImageOnly: true }; } const escapedContent = content.replace(/</g, "&lt;").replace(/>/g, "&gt;"); return { html: escapedContent, isImageOnly: false }; }
-    function renderChatWindow(character) {
+
+    function renderChatSelectionView() {
+        const allPartners = [...characterList, ...customChatPartners];
+        let partnersHTML = '';
+        if (allPartners.length > 0) {
+            partnersHTML = allPartners.map(p => `
+                <div class="chat-partner-card" onclick="selectChatPartner('${p.id}')">
+                    <img src="${p.avatar || BLANK_AVATAR}" alt="${p.name}">
+                    <p>${p.name}</p>
+                </div>`).join('');
+        } else {
+            partnersHTML = `<p style="text-align:center; opacity:0.7; width:100%;">暂无聊天对象，快去【人物】页添加吧！</p>`;
+        }
+        
+        return `
+            <div class="chat-selection-view">
+                 <h3 class="content-title"><span class="content-title-main">【 选择闲谈对象 】</span></h3>
+                 <div class="chat-partner-grid">${partnersHTML}</div>
+                 <div class="controls-group" style="margin-top:auto;">
+                    <button class="action-button-small" onclick="openModal('custom-chat-partner-modal')">添加自定义对象</button>
+                 </div>
+            </div>`;
+    }
+
+    // [MODIFIED FOR REQ 1] Added chat actions button (...)
+    function renderIndividualChatView(character) {
         const history = chatHistories[character.id] || [];
         const messagesHTML = history.map(msg => {
-            if (msg.role === 'system') {
-                return `<div class="chat-message system"><div class="bubble">${msg.content}</div></div>`;
-            }
+            if (msg.role === 'system') return `<div class="chat-message system"><div class="bubble">${msg.content}</div></div>`;
             const { html, isImageOnly } = formatMessageContent(msg.content);
             const bubbleClasses = isImageOnly ? "bubble image-only" : "bubble";
             const avatarSrc = msg.role === 'user' ? protagonistData.avatar : (character.avatar || BLANK_AVATAR);
             const messageClass = msg.role === 'user' ? "chat-message user" : "chat-message assistant";
             return `<div class="${messageClass}"><img src="${avatarSrc}" class="avatar"><div class="${bubbleClasses}">${html}</div></div>`;
         }).join('');
+
         const kaomojiHTML = KAOMOJI_LIST.map(e => `<div class="emoji-item" onclick="insertEmoji('${e.replace(/'/g, "\\'")}', 'text')">${e}</div>`).join('');
-        const stickersHTML = customEmojis.map(emoji => `<img src="${emoji.url}" class="sticker-item" title="${emoji.name}" onclick="insertEmoji('${emoji.url}', 'image')">`).join('');
-        const chatWindowContent = `<div class="chat-messages" id="chat-messages-container">${messagesHTML}</div>
-        <div class="chat-input-area">
-            <textarea id="chat-input" class="styled-textarea" rows="2" placeholder="与${character.name}说些什么..."></textarea>
-            <button class="action-button-small" onclick="toggleEmojiPanel()">表情</button>
-            <button id="chat-send-btn" class="action-button-small" onclick="sendChatMessage()">发送</button>
-            <div class="emoji-panel hidden" id="emoji-panel">
-                <div class="emoji-panel-tabs">
-                    <div class="emoji-tab active" onclick="switchEmojiTab(this, 'kaomoji-page')">颜文字</div>
-                    <div class="emoji-tab" onclick="switchEmojiTab(this, 'sticker-page')">我的贴图</div>
-                </div>
-                <div class="emoji-panel-content">
-                    <div id="kaomoji-page" class="emoji-page active">${kaomojiHTML}</div>
-                    <div id="sticker-page" class="emoji-page">
-                        ${stickersHTML || '<p style="text-align:center; opacity:0.7; grid-column: 1 / -1;">暂无贴图</p>'}
-                        <div style="text-align:center; margin-top:10px; grid-column: 1 / -1;"><button class="action-button-small" onclick="openEmojiManagement()">管理贴图</button></div>
+        
+        const globalStickers = customEmojis.filter(e => e.scope === 'global');
+        const charStickers = customEmojis.filter(e => e.scope === character.id);
+        const globalStickersHTML = globalStickers.length > 0 ? `<div class="sticker-category-title">通用</div><div class="sticker-grid">${globalStickers.map(emoji => `<img src="${emoji.url}" class="sticker-item" title="${emoji.name}" onclick="insertEmoji('${emoji.url}', 'image')">`).join('')}</div>` : '';
+        const charStickersHTML = charStickers.length > 0 ? `<div class="sticker-category-title">${character.name} 专属</div><div class="sticker-grid">${charStickers.map(emoji => `<img src="${emoji.url}" class="sticker-item" title="${emoji.name}" onclick="insertEmoji('${emoji.url}', 'image')">`).join('')}</div>` : '';
+        const stickersHTML = globalStickersHTML + charStickersHTML;
+
+        return `<div class="chat-individual-view">
+            <div class="chat-header">
+                <span class="back-button" onclick="exitIndividualChat()" title="返回列表">‹</span>
+                <span class="char-name">${character.name}</span>
+                <span class="chat-actions-button" onclick="openChatActionsMenu(this, '${character.id}')" title="更多操作">...</span>
+                <span class="beautify-button" onclick="openChatBeautifyModal()" title="界面美化">🎨</span>
+            </div>
+            <div class="chat-messages" id="chat-messages-container">${messagesHTML}</div>
+            <div class="chat-input-area">
+                <textarea id="chat-input" class="styled-textarea" rows="2" placeholder="与${character.name}说些什么..."></textarea>
+                <button class="action-button-small" onclick="toggleEmojiPanel()">表情</button>
+                <button id="chat-send-btn" class="action-button-small" onclick="sendChatMessage()">发送</button>
+                <div class="emoji-panel hidden" id="emoji-panel">
+                    <div class="emoji-panel-tabs">
+                        <div class="emoji-tab active" onclick="switchEmojiTab(this, 'kaomoji-page')">颜文字</div>
+                        <div class="emoji-tab" onclick="switchEmojiTab(this, 'sticker-page')">我的贴图</div>
+                    </div>
+                    <div class="emoji-panel-content">
+                        <div id="kaomoji-page" class="emoji-page active">${kaomojiHTML}</div>
+                        <div id="sticker-page" class="emoji-page">
+                            ${stickersHTML || '<p style="text-align:center; opacity:0.7;">暂无贴图</p>'}
+                            <div style="text-align:center; margin-top:10px;"><button class="action-button-small" onclick="openEmojiManagement()">管理贴图</button></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>`; 
-        const mainChatWindow = document.getElementById('chat-window-main'); if (mainChatWindow) { mainChatWindow.innerHTML = chatWindowContent; const messagesContainer = document.getElementById('chat-messages-container'); if(messagesContainer) messagesContainer.scrollTop = messagesContainer.scrollHeight; } return chatWindowContent; 
+        </div>`;
     }
+    
+    function formatMessageContent(content) { const trimmedContent = content.trim(); const imgRegex = /^(https?:\/\/[^\s<>"]+\.(?:png|jpe?g|gif|webp|svg))(\?.*)?$/i; if (imgRegex.test(trimmedContent) || trimmedContent.startsWith('data:image')) { return { html: `<img src="${trimmedContent}" class="chat-image" alt="聊天图片" onclick="window.open('${trimmedContent}', '_blank')">`, isImageOnly: true }; } const escapedContent = content.replace(/</g, "&lt;").replace(/>/g, "&gt;"); return { html: escapedContent, isImageOnly: false }; }
     function toggleEmojiPanel() { document.getElementById('emoji-panel').classList.toggle('hidden'); }
     function switchEmojiTab(tabElement, pageId) { document.querySelectorAll('.emoji-tab').forEach(t => t.classList.remove('active')); tabElement.classList.add('active'); document.querySelectorAll('.emoji-page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); }
     function insertEmoji(content, type) { const textarea = document.getElementById('chat-input'); if (type === 'image') { textarea.value = content; } else { textarea.value += content; } textarea.focus(); }
-    function selectChatPartner(charId) { const character = characterList.find(c => c.id === charId) || customChatPartners.find(c => c.id === charId); if (character) { activeChatCharacter = character; renderChatPane(); } }
+    
+    function selectChatPartner(charId) {
+        const character = characterList.find(c => c.id === charId) || customChatPartners.find(c => c.id === charId);
+        if (character) {
+            activeChatCharacter = character;
+            renderChatPane();
+        }
+    }
+    function exitIndividualChat() {
+        activeChatCharacter = null;
+        renderChatPane();
+    }
+    
     function addCustomChatPartner() { const name = document.getElementById('custom-chat-name').value; const desc = document.getElementById('custom-chat-desc').value; if (!name.trim()) { alert("姓名不能为空"); return; } const newPartner = { id: `custom-${Date.now()}`, name, desc, avatar: BLANK_AVATAR }; customChatPartners.push(newPartner); saveGameData(); closeModal(null, 'custom-chat-partner-modal'); document.getElementById('custom-chat-name').value = ''; document.getElementById('custom-chat-desc').value = ''; renderChatPane(); selectChatPartner(newPartner.id); }
     
     function openCustomPartnerActions(partnerId, partnerName) {
@@ -1130,18 +1336,137 @@
         });
     }
 
-    async function sendChatMessage() { if (!activeChatCharacter) return; const input = document.getElementById('chat-input'); const sendBtn = document.getElementById('chat-send-btn'); const text = input.value.trim(); if (!text) return; if (!chatHistories[activeChatCharacter.id]) chatHistories[activeChatCharacter.id] = []; chatHistories[activeChatCharacter.id].push({ role: 'user', content: text }); input.value = ''; renderChatWindow(activeChatCharacter); const historyForPrompt = (chatHistories[activeChatCharacter.id] || []).filter(m => m.role !== 'system').map(m => `${m.role === 'user' ? protagonistData.name : activeChatCharacter.name}: ${m.content}`).join('\n'); const prompt = getPrompt('sendChatMessage', { charName: activeChatCharacter.name, charDesc: activeChatCharacter.desc, protagonistName: protagonistData.name, protagonistPersona: protagonistData.persona, history: historyForPrompt }); const result = await callLLM(prompt, sendBtn); if (result) { chatHistories[activeChatCharacter.id].push({ role: 'assistant', content: result }); saveGameData(); renderChatWindow(activeChatCharacter); } }
-    function uploadEmojis(event) { const files = event.target.files; if (!files.length) return; for (const file of files) { const reader = new FileReader(); reader.onload = e => { const fileName = file.name.split('.').slice(0, -1).join('.') || `贴图_${Date.now()}`; const newEmoji = { name: fileName, url: e.target.result }; if (!customEmojis.some(emoji => emoji.url === newEmoji.url)) customEmojis.push(newEmoji); }; reader.readAsDataURL(file); } setTimeout(() => { saveGameData(); renderEmojiManagementModal(); if(activeChatCharacter) renderChatWindow(activeChatCharacter); showToast(`成功添加 ${files.length} 个贴图！`); }, 500); event.target.value = ''; }
-    function importEmojisFromURLs() { const textarea = document.getElementById('emoji-url-import'); const lines = textarea.value.trim().split('\n'); const newEmojis = []; lines.forEach(line => { const parts = line.split(','); if (parts.length >= 2) { const name = parts[0].trim(); const url = parts.slice(1).join(',').trim(); if (name && (url.startsWith('http') || url.startsWith('data:'))) { newEmojis.push({ name, url }); } } }); if (!newEmojis.length) { showToast('未输入有效或格式正确的内容'); return; } const existingUrls = new Set(customEmojis.map(e => e.url)); const uniqueNewEmojis = newEmojis.filter(e => !existingUrls.has(e.url)); customEmojis.push(...uniqueNewEmojis); saveGameData(); renderEmojiManagementModal(); if (activeChatCharacter) renderChatWindow(activeChatCharacter); textarea.value = ''; showToast(`成功导入 ${uniqueNewEmojis.length} 个新贴图！`); }
-    function openEmojiManagement() { renderEmojiManagementModal(); openModal('manage-emojis-modal'); }
-    function renderEmojiManagementModal() { const grid = document.getElementById('emoji-management-grid'); grid.innerHTML = customEmojis.map((emoji, index) => `<div class="emoji-management-item"><img src="${emoji.url}" title="${emoji.name}"><p class="emoji-name-display">${emoji.name}</p><input type="checkbox" data-index="${index}"></div>`).join(''); document.getElementById('toggle-emoji-select').textContent = '全选'; }
-    function toggleSelectAllEmojis(button) {
-        const checkboxes = document.querySelectorAll('#emoji-management-grid input[type="checkbox"]');
-        const shouldSelectAll = button.textContent === '全选';
-        checkboxes.forEach(cb => cb.checked = shouldSelectAll);
-        button.textContent = shouldSelectAll ? '取消全选' : '全选';
+    async function sendChatMessage() { if (!activeChatCharacter) return; const input = document.getElementById('chat-input'); const sendBtn = document.getElementById('chat-send-btn'); const text = input.value.trim(); if (!text) return; if (!chatHistories[activeChatCharacter.id]) chatHistories[activeChatCharacter.id] = []; chatHistories[activeChatCharacter.id].push({ role: 'user', content: text }); input.value = ''; renderChatPane(); const historyForPrompt = (chatHistories[activeChatCharacter.id] || []).filter(m => m.role !== 'system').map(m => `${m.role === 'user' ? protagonistData.name : activeChatCharacter.name}: ${m.content}`).join('\n'); const prompt = getPrompt('sendChatMessage', { charName: activeChatCharacter.name, charDesc: activeChatCharacter.desc, protagonistName: protagonistData.name, protagonistPersona: protagonistData.persona, history: historyForPrompt }); const result = await callLLM(prompt, sendBtn); if (result) { chatHistories[activeChatCharacter.id].push({ role: 'assistant', content: result }); saveGameData(); renderChatPane(); } }
+    
+    function uploadEmojis(event) {
+        const files = event.target.files;
+        if (!files.length) return;
+        
+        for (const file of files) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const fileName = file.name.split('.').slice(0, -1).join('.') || `贴图_${Date.now()}`;
+                const newEmoji = { id: `emoji-${Date.now()}-${Math.random()}`, name: fileName, url: e.target.result, scope: 'global' };
+                if (!customEmojis.some(emoji => emoji.url === newEmoji.url)) customEmojis.push(newEmoji);
+            };
+            reader.readAsDataURL(file);
+        }
+        setTimeout(() => {
+            saveGameData();
+            renderEmojiManagementModal();
+            if(activeChatCharacter) renderChatPane();
+            showToast(`成功添加 ${files.length} 个贴图！`);
+        }, 500);
+        event.target.value = '';
     }
-    function deleteSelectedEmojis() { const checkboxes = document.querySelectorAll('#emoji-management-grid input[type="checkbox"]:checked'); if (!checkboxes.length) { showToast('请选择要删除的贴图'); return; } const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)); customEmojis = customEmojis.filter((_, index) => !indicesToDelete.includes(index)); saveGameData(); renderEmojiManagementModal(); if(activeChatCharacter) renderChatWindow(activeChatCharacter); showToast(`成功删除 ${checkboxes.length} 个贴图`); }
+    
+    function importEmojisFromURLs() {
+        const textarea = document.getElementById('emoji-url-import');
+        const lines = textarea.value.trim().split('\n');
+        const newEmojis = [];
+        lines.forEach(line => {
+            const parts = line.split(',');
+            if (parts.length >= 2) {
+                const name = parts[0].trim();
+                const url = parts.slice(1).join(',').trim();
+                if (name && (url.startsWith('http') || url.startsWith('data:'))) {
+                    newEmojis.push({ id: `emoji-${Date.now()}-${Math.random()}`, name, url, scope: 'global' });
+                }
+            }
+        });
+        if (!newEmojis.length) { showToast('未输入有效或格式正确的内容'); return; }
+        const existingUrls = new Set(customEmojis.map(e => e.url));
+        const uniqueNewEmojis = newEmojis.filter(e => !existingUrls.has(e.url));
+        customEmojis.push(...uniqueNewEmojis);
+        saveGameData();
+        renderEmojiManagementModal();
+        if (activeChatCharacter) renderChatPane();
+        textarea.value = '';
+        showToast(`成功导入 ${uniqueNewEmojis.length} 个新贴图！`);
+    }
+
+    function openEmojiManagement() { renderEmojiManagementModal(); openModal('manage-emojis-modal'); }
+    
+    // [MODIFIED FOR REQ 3] Reworked sticker management UI and logic
+    function renderEmojiManagementModal() {
+        const groupsContainer = document.getElementById('emoji-management-groups');
+        groupsContainer.innerHTML = ''; // Clear previous content
+
+        const emojiGroups = customEmojis.reduce((acc, emoji) => {
+            const scope = emoji.scope || 'global';
+            if (!acc[scope]) acc[scope] = [];
+            acc[scope].push(emoji);
+            return acc;
+        }, {});
+        
+        const allPartners = [...characterList, ...customChatPartners];
+
+        const renderGroup = (scopeId, title, emojis) => {
+            if (!emojis || emojis.length === 0) return '';
+            const emojiItemsHTML = emojis.map(emoji => `
+                <div class="emoji-management-item">
+                    <label>
+                        <img src="${emoji.url}" title="${emoji.name}">
+                        <input type="checkbox" class="emoji-select-checkbox" value="${emoji.id}">
+                    </label>
+                    <span class="delete-btn" onclick="deleteEmoji('${emoji.id}')">×</span>
+                </div>`
+            ).join('');
+            
+            return `
+                <div class="emoji-group" data-scope="${scopeId}">
+                    <div class="emoji-group-header">
+                        <h5>${title}</h5>
+                        <label><input type="checkbox" onchange="selectAllInGroup(this, '${scopeId}')"> 全选</label>
+                    </div>
+                    <div class="emoji-management-grid">${emojiItemsHTML}</div>
+                </div>`;
+        };
+        
+        let finalHTML = renderGroup('global', '通用贴图', emojiGroups['global']);
+        
+        allPartners.forEach(p => {
+            finalHTML += renderGroup(p.id, `${p.name} 专属`, emojiGroups[p.id]);
+        });
+
+        if (!finalHTML.trim()) {
+            finalHTML = '<p style="text-align:center; opacity:0.7;">暂无贴图，快去添加吧！</p>';
+        }
+
+        groupsContainer.innerHTML = finalHTML;
+    }
+
+    function selectAllInGroup(masterCheckbox, scope) {
+        const groupCheckboxes = document.querySelectorAll(`.emoji-group[data-scope="${scope}"] .emoji-select-checkbox`);
+        groupCheckboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    }
+    
+    function deleteSelectedEmojis() {
+        const selectedIds = Array.from(document.querySelectorAll('#manage-emojis-modal .emoji-select-checkbox:checked')).map(cb => cb.value);
+        if (selectedIds.length === 0) {
+            showToast('未选择任何贴图。');
+            return;
+        }
+
+        showConfirmationModal(`确定要删除选中的 ${selectedIds.length} 个贴图吗？`, () => {
+            customEmojis = customEmojis.filter(e => !selectedIds.includes(e.id));
+            saveGameData();
+            renderEmojiManagementModal();
+            if(activeChatCharacter) renderChatPane();
+            showToast('选中的贴图已删除。');
+        });
+    }
+
+    function deleteEmoji(emojiId) {
+        showConfirmationModal(`确定要删除这个贴图吗？`, () => {
+            customEmojis = customEmojis.filter(e => e.id !== emojiId);
+            saveGameData();
+            renderEmojiManagementModal();
+            if(activeChatCharacter) renderChatPane();
+            showToast(`贴图已删除`);
+        });
+    }
+
     function renderForumPane() { let postsHTML = forumPosts.slice().reverse().map(post => { const deleteButtonHTML = post.author === protagonistData.name ? `<button class="action-button-small" style="position:absolute; top:15px; right:15px; padding: 4px 8px; font-size: 12px;" onclick="deleteForumPost(${post.id}, event)">删除</button>` : ''; return `<div class="forum-post" onclick="viewPost(${post.id})"><h4>${post.author === protagonistData.name ? '【我的】' : ''}${post.title}</h4><p>发帖人: ${post.author} | 回复: ${post.replies.length} | 查看: ${post.views}</p>${deleteButtonHTML}</div>`; }).join(''); document.getElementById('forum-pane').innerHTML = `<h3 class="content-title"><span class="content-title-main">【 江湖论坛 】</span><div style="position: absolute; right: 0;"><span id="forum-refresh-btn" class="text-button" onclick="refreshForum(this)">刷新</span></div></h3><div class="controls-group"><button class="action-button-small" onclick="openModal('new-post-modal')">发布新帖</button></div><div id="forum-posts-list">${postsHTML || '<p style="text-align:center; opacity:0.7;">论坛尚无帖子</p>'}</div>`; }
     function deleteForumPost(postId, event) { event.stopPropagation(); showConfirmationModal('确定要删除这个帖子吗？', () => { forumPosts = forumPosts.filter(p => p.id !== postId); saveGameData(); renderForumPane(); }); }
     async function refreshForum(button) { button.textContent = '正在生成中!'; button.setAttribute('disabled', true); const prompt = getPrompt('refreshForum', {}); const result = await callLLM(prompt, null); if (result) { try { const newPosts = JSON.parse(result.replace(/```json/g, '').replace(/```/g, '')); newPosts.forEach(post => { forumPosts.push({ id: Date.now() + Math.random(), title: post.title, content: post.content, author: post.author, replies: [], views: 0 }); }); saveGameData(); showToast(`论坛刷新，新增 ${newPosts.length} 个帖子！`); } catch (e) { showToast("生成新帖失败，API返回格式错误。"); console.error(e, result); } } renderForumPane(); }
@@ -1507,7 +1832,6 @@
     function openModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
     function closeModal(event, modalId) { const modal = document.getElementById(modalId); if (!event || event.target === modal) { modal.style.display = 'none'; } }
     
-    // [ADDED FOR REQ 1] Generic confirmation modal function
     function showConfirmationModal(message, onConfirmCallback) {
         document.getElementById('confirmation-modal-text').innerHTML = message;
         const confirmBtn = document.getElementById('confirmation-modal-confirm-btn');
@@ -1522,53 +1846,61 @@
     function hideLoader() { document.getElementById('loader').style.display = 'none'; }
     function showToast(message) { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3000); }
     
-    function loadChatBeautifySettings() {
-        const bgUrl = localStorage.getItem('chatBgUrl');
-        const userCss = localStorage.getItem('chatUserBubbleCss');
-        const assistantCss = localStorage.getItem('chatAssistantBubbleCss');
-        const styleTag = document.getElementById('custom-chat-styles');
+    function applyPerChatBeautify(character) {
+        const styleTag = document.getElementById('custom-per-chat-styles');
         if (!styleTag) return;
         
         let customCss = '';
-        if (bgUrl) {
-            customCss += `#chat-messages-container { background-image: url('${bgUrl}') !important; }`;
-        }
-        if (userCss) {
-            customCss += `.chat-message.user .bubble { ${userCss} }`;
-        }
-        if (assistantCss) {
-            customCss += `.chat-message.assistant .bubble { ${assistantCss} }`;
+        if (character && character.beautify) {
+            const settings = character.beautify;
+            const viewSelector = '#chat-pane .chat-individual-view'; // Scope styles
+            if (settings.bgUrl) {
+                customCss += `${viewSelector} .chat-messages { background-image: url('${settings.bgUrl}') !important; }`;
+            }
+            if (settings.userBubbleCss) {
+                customCss += `${viewSelector} .chat-message.user .bubble { ${settings.userBubbleCss} }`;
+            }
+            if (settings.assistantBubbleCss) {
+                customCss += `${viewSelector} .chat-message.assistant .bubble { ${settings.assistantBubbleCss} }`;
+            }
         }
         styleTag.innerHTML = customCss;
     }
 
     function openChatBeautifyModal() {
-        document.getElementById('chat-bg-url').value = localStorage.getItem('chatBgUrl') || '';
-        document.getElementById('user-bubble-css').value = localStorage.getItem('chatUserBubbleCss') || '';
-        document.getElementById('assistant-bubble-css').value = localStorage.getItem('chatAssistantBubbleCss') || '';
+        if (!activeChatCharacter) return;
+        
+        if (!activeChatCharacter.beautify) activeChatCharacter.beautify = {};
+        const settings = activeChatCharacter.beautify;
+
+        document.getElementById('chat-beautify-modal-title').innerText = `【${activeChatCharacter.name}】聊天美化`;
+        document.getElementById('chat-bg-url').value = settings.bgUrl || '';
+        document.getElementById('user-bubble-css').value = settings.userBubbleCss || '';
+        document.getElementById('assistant-bubble-css').value = settings.assistantBubbleCss || '';
         openModal('chat-beautify-modal');
     }
 
     function applyChatBeautifySettings() {
+        if (!activeChatCharacter) return;
+
         const bgUrl = document.getElementById('chat-bg-url').value.trim();
         const userCss = document.getElementById('user-bubble-css').value.trim();
         const assistantCss = document.getElementById('assistant-bubble-css').value.trim();
 
-        localStorage.setItem('chatBgUrl', bgUrl);
-        localStorage.setItem('chatUserBubbleCss', userCss);
-        localStorage.setItem('chatAssistantBubbleCss', assistantCss);
+        activeChatCharacter.beautify = { bgUrl, userBubbleCss, assistantCss };
+        saveGameData();
         
-        loadChatBeautifySettings();
+        applyPerChatBeautify(activeChatCharacter);
         closeModal(null, 'chat-beautify-modal');
         showToast('聊天界面样式已应用！');
     }
 
     function resetChatBeautifySettings() {
-        showConfirmationModal('确定要恢复聊天界面的默认样式吗？', () => {
-            localStorage.removeItem('chatBgUrl');
-            localStorage.removeItem('chatUserBubbleCss');
-            localStorage.removeItem('chatAssistantBubbleCss');
-            loadChatBeautifySettings();
+        if (!activeChatCharacter) return;
+        showConfirmationModal(`确定要恢复【${activeChatCharacter.name}】的默认聊天样式吗？`, () => {
+            activeChatCharacter.beautify = {};
+            saveGameData();
+            applyPerChatBeautify(activeChatCharacter);
             closeModal(null, 'chat-beautify-modal');
             showToast('聊天界面样式已重置。');
         });
